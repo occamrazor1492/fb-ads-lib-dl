@@ -1,0 +1,135 @@
+const adUrl = document.querySelector("#adUrl");
+const scanBtn = document.querySelector("#scanBtn");
+const scanCurrentBtn = document.querySelector("#scanCurrentBtn");
+const statusText = document.querySelector("#statusText");
+const resultsPanel = document.querySelector("#resultsPanel");
+const summary = document.querySelector("#summary");
+const mediaList = document.querySelector("#mediaList");
+const downloadBestBtn = document.querySelector("#downloadBestBtn");
+
+let lastResult = null;
+
+function setBusy(isBusy, text) {
+  scanBtn.disabled = isBusy;
+  scanCurrentBtn.disabled = isBusy;
+  statusText.textContent = text;
+}
+
+function extensionMessage(message) {
+  return new Promise((resolve, reject) => {
+    chrome.runtime.sendMessage(message, response => {
+      const err = chrome.runtime.lastError;
+      if (err) {
+        reject(new Error(err.message));
+        return;
+      }
+      if (response?.ok === false) {
+        reject(new Error(response.error || "Request failed."));
+        return;
+      }
+      resolve(response);
+    });
+  });
+}
+
+function escapeText(value) {
+  return String(value ?? "").replace(/[&<>"']/g, char => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    "\"": "&quot;",
+    "'": "&#39;"
+  })[char]);
+}
+
+function describeItem(item) {
+  const parts = [];
+  if (item.kind) parts.push(item.kind.toUpperCase());
+  if (item.quality) parts.push(`${item.quality}p`);
+  if (item.bitrate) parts.push(`${Math.round(item.bitrate / 1000)} kbps`);
+  if (item.duration) parts.push(`${item.duration}s`);
+  if (item.videoId) parts.push(`video ${item.videoId}`);
+  return parts.join(" · ") || "Media";
+}
+
+function renderResult(result) {
+  lastResult = result;
+  const media = Array.isArray(result.media) ? result.media : [];
+  resultsPanel.hidden = false;
+  downloadBestBtn.disabled = !result.best;
+  summary.textContent = media.length
+    ? `${media.length} media URL${media.length === 1 ? "" : "s"} found. ${result.adId ? `Ad ID: ${result.adId}.` : ""}`
+    : "No downloadable media was found on the loaded page.";
+
+  mediaList.innerHTML = media.map((item, index) => `
+    <article class="mediaItem">
+      <div class="mediaTitle">
+        <strong>${escapeText(describeItem(item))}</strong>
+        <span class="pill">${escapeText(item.progressive ? "MP4" : item.kind || "media")}</span>
+      </div>
+      <div class="mediaMeta">${escapeText(item.filename || item.url)}</div>
+      <div class="mediaActions">
+        <button type="button" class="secondary" data-download-index="${index}">Download</button>
+      </div>
+    </article>
+  `).join("");
+}
+
+async function startScan(url, currentTab = false) {
+  setBusy(true, currentTab ? "Scanning current tab..." : "Opening and scanning...");
+  resultsPanel.hidden = true;
+  mediaList.innerHTML = "";
+
+  try {
+    const response = await extensionMessage({
+      type: currentTab ? "SCAN_CURRENT_TAB" : "SCAN_URL",
+      url
+    });
+    renderResult(response.result);
+    statusText.textContent = "Scan complete.";
+  } catch (error) {
+    statusText.innerHTML = `<span class="error">${escapeText(error.message)}</span>`;
+  } finally {
+    setBusy(false, statusText.textContent || "Ready.");
+  }
+}
+
+scanBtn.addEventListener("click", () => {
+  const url = adUrl.value.trim();
+  if (!url) {
+    statusText.innerHTML = '<span class="error">Paste an Ads Library link first.</span>';
+    return;
+  }
+  startScan(url, false);
+});
+
+scanCurrentBtn.addEventListener("click", () => {
+  startScan("", true);
+});
+
+downloadBestBtn.addEventListener("click", async () => {
+  if (!lastResult?.best) return;
+  try {
+    await extensionMessage({ type: "DOWNLOAD_ITEM", item: lastResult.best });
+    statusText.textContent = "Download started.";
+  } catch (error) {
+    statusText.innerHTML = `<span class="error">${escapeText(error.message)}</span>`;
+  }
+});
+
+mediaList.addEventListener("click", async event => {
+  const button = event.target.closest("[data-download-index]");
+  if (!button || !lastResult) return;
+  const item = lastResult.media[Number(button.dataset.downloadIndex)];
+  if (!item) return;
+  try {
+    await extensionMessage({ type: "DOWNLOAD_ITEM", item });
+    statusText.textContent = "Download started.";
+  } catch (error) {
+    statusText.innerHTML = `<span class="error">${escapeText(error.message)}</span>`;
+  }
+});
+
+chrome.storage.local.get(["lastAdsLibraryUrl"], data => {
+  if (data.lastAdsLibraryUrl) adUrl.value = data.lastAdsLibraryUrl;
+});

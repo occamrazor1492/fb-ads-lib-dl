@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Ads Library Media Saver</title>
+    <link rel="stylesheet" href="popup.css">
+  </head>
+  <body>
+    <main class="shell">
+      <section class="panel">
+        <div class="brand">
+          <div class="mark" aria-hidden="true">A</div>
+          <div>
+            <h1>Ads Library Media Saver</h1>
+            <p id="statusText">Paste a Meta Ads Library ad link.</p>
+          </div>
+        </div>
+
+        <label for="adUrl">Ads Library link</label>
+        <textarea id="adUrl" rows="4" spellcheck="false" placeholder="https://www.facebook.com/ads/library/?id=..."></textarea>
+
+        <div class="controls">
+          <button id="scanBtn" type="button">Scan</button>
+          <button id="scanCurrentBtn" type="button" class="secondary">Current tab</button>
+        </div>
+      </section>
+
+      <section class="panel results" id="resultsPanel" hidden>
+        <div class="resultsHead">
+          <h2>Detected media</h2>
+          <button id="downloadBestBtn" type="button" class="secondary" disabled>Best MP4</button>
+        </div>
+        <div id="summary" class="summary"></div>
+        <div id="mediaList" class="mediaList"></div>
+      </section>
+
+      <section class="notice">
+        Works on pages your browser can already access. It does not upload cookies or run a shared account.
+      </section>
+    </main>
+    <script src="popup.js"></script>
+  </body>
+</html>

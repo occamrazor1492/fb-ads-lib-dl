@@ -1,0 +1,26 @@
+{
+  "manifest_version": 3,
+  "name": "Ads Library Media Saver",
+  "version": "0.1.0",
+  "description": "Download media from Meta Ads Library pages you can access in your own Chrome session.",
+  "permissions": [
+    "downloads",
+    "scripting",
+    "storage",
+    "tabs"
+  ],
+  "host_permissions": [
+    "https://www.facebook.com/*",
+    "https://web.facebook.com/*",
+    "https://*.fbcdn.net/*",
+    "https://*.facebook.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_title": "Ads Library Media Saver",
+    "default_popup": "popup.html"
+  },
+  "minimum_chrome_version": "116"
+}
