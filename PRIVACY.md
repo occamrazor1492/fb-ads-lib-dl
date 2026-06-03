@@ -24,4 +24,4 @@ The extension does not use a remote backend service.
 
 ## Contact
 
-Add a public support email or website before publishing this extension publicly.
+For support, open an issue at https://github.com/occamrazor1492/fb-ads-lib-dl/issues.

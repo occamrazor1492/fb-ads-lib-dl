@@ -90,9 +90,18 @@ function normalizeFacebookUrl(rawUrl) {
     throw new Error("Only facebook.com Ads Library links are supported.");
   }
 
+  if (!isAdsLibraryPath(url)) {
+    throw new Error("Open or paste a Meta Ads Library URL, such as https://www.facebook.com/ads/library/?id=...");
+  }
+
   url.hostname = "www.facebook.com";
   url.protocol = "https:";
   return url.toString();
+}
+
+function isAdsLibraryPath(url) {
+  const pathname = url.pathname.replace(/\/+$/, "");
+  return pathname === "/ads/library";
 }
 
 function normalizeScanResult(result, sourceUrl) {

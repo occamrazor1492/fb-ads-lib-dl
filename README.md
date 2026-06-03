@@ -40,11 +40,11 @@ The extension requests:
 - `scripting`: injects the scanner into the current Facebook/Ads Library page.
 - `storage`: saves the last pasted URL locally.
 - `tabs`: opens and scans the requested Ads Library tab.
-- Facebook and Facebook CDN host permissions: reads media URLs from pages the user has opened.
+- Facebook Ads Library host permissions: reads media URLs from Ads Library pages the user has opened.
 
 ## Privacy
 
-The extension does not collect, sell, share, or transmit personal data. It does not have a server component. See [PRIVACY.md](PRIVACY.md) for the privacy policy draft.
+The extension does not collect, sell, share, or transmit personal data. It does not have a server component. See [PRIVACY.md](PRIVACY.md) for the privacy policy.
 
 ## Limitations
 
@@ -79,3 +79,5 @@ Before publishing to the Chrome Web Store, prepare:
 - A public privacy policy URL.
 - A clear support contact.
 - A policy review for Meta's terms and the Chrome Web Store Developer Program Policies.
+
+See [STORE_LISTING.md](STORE_LISTING.md) for draft Chrome Web Store listing copy and review notes.
