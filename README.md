@@ -14,7 +14,7 @@ It runs in Chrome. There is no backend service, no shared Facebook account, and 
 - Save media records to a local library.
 - Edit categories, tags, and notes for saved creatives.
 - Filter the local library by keyword, category, or tag.
-- Connect Google Drive from the popup or library page.
+- Connect Google Drive from the popup or library page. If OAuth is not configured yet, the button opens a setup guide.
 - Upload a saved creative to the user's Google Drive after OAuth setup and user consent.
 
 ## Install Locally

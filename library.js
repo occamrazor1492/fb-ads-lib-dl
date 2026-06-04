@@ -63,11 +63,12 @@ function renderSummary() {
 function renderDriveStatus() {
   driveStatus.className = "statusLine";
   connectDriveBtn.disabled = false;
+  connectDriveBtn.textContent = "Connect Drive";
 
   if (!currentDriveStatus?.configured) {
     driveStatus.classList.add("warning");
     driveStatus.textContent = "Google Drive setup required: add a Chrome extension OAuth Client ID in manifest.json.";
-    connectDriveBtn.disabled = true;
+    connectDriveBtn.textContent = "Drive setup";
     return;
   }
 
@@ -76,6 +77,8 @@ function renderDriveStatus() {
     driveStatus.textContent = currentDriveStatus.folderId
       ? "Google Drive connected. Uploads will go to the Ads Library Media Saver folder."
       : "Google Drive connected. The upload folder will be created on first upload.";
+    connectDriveBtn.textContent = "Connected";
+    connectDriveBtn.disabled = true;
     return;
   }
 
@@ -267,6 +270,11 @@ function readCardPatch(card) {
 }
 
 async function connectDrive() {
+  if (!currentDriveStatus?.configured) {
+    await extensionMessage({ type: "OPEN_DRIVE_SETUP" });
+    return;
+  }
+
   connectDriveBtn.disabled = true;
   const originalText = connectDriveBtn.textContent;
   connectDriveBtn.textContent = "Connecting...";

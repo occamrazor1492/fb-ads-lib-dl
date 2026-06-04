@@ -14,7 +14,7 @@ let driveStatus = null;
 function setBusy(isBusy, text) {
   scanCurrentBtn.disabled = isBusy;
   openLibraryBtn.disabled = isBusy;
-  connectDriveBtn.disabled = isBusy || !driveStatus?.configured || driveStatus?.connected;
+  connectDriveBtn.disabled = isBusy || driveStatus?.connected;
   statusText.textContent = text;
 }
 
@@ -84,9 +84,9 @@ function renderDriveStatus(status) {
   driveStatus = status || {};
 
   if (!driveStatus.configured) {
-    driveStatusText.textContent = "Setup required in this build before users can connect.";
-    connectDriveBtn.textContent = "Setup required";
-    connectDriveBtn.disabled = true;
+    driveStatusText.textContent = "Google OAuth setup is required before users can connect.";
+    connectDriveBtn.textContent = "Drive setup";
+    connectDriveBtn.disabled = false;
     return;
   }
 
@@ -115,6 +115,11 @@ async function loadDriveStatus() {
 }
 
 async function connectDrive() {
+  if (!driveStatus?.configured) {
+    await extensionMessage({ type: "OPEN_DRIVE_SETUP" });
+    return;
+  }
+
   connectDriveBtn.disabled = true;
   connectDriveBtn.textContent = "Connecting...";
   driveStatusText.textContent = "Opening Google authorization...";
@@ -125,8 +130,8 @@ async function connectDrive() {
     statusText.textContent = "Google Drive connected.";
   } catch (error) {
     driveStatusText.innerHTML = `<span class="error">${escapeText(error.message)}</span>`;
-    connectDriveBtn.textContent = driveStatus?.configured ? "Connect Drive" : "Setup required";
-    connectDriveBtn.disabled = !driveStatus?.configured;
+    connectDriveBtn.textContent = driveStatus?.configured ? "Connect Drive" : "Drive setup";
+    connectDriveBtn.disabled = false;
   }
 }
 
