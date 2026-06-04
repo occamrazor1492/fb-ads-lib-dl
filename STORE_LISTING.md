@@ -28,6 +28,7 @@ The extension runs in Chrome. It has no developer-controlled backend service, do
 - Save media records to a local library.
 - Edit tags, categories, and notes.
 - Filter saved creatives by keyword, tag, or category.
+- Connect Google Drive from the popup or library page.
 - Optionally upload selected saved media to the user's Google Drive.
 
 ### Important Limitations
@@ -107,7 +108,7 @@ To test:
 4. Click the inline "Save" button beside a creative.
 5. If buttons are not visible yet, open the extension popup and click "Add page buttons."
 6. Open the popup and click "Library" to edit tags and categories.
-7. If Google Drive OAuth is configured, click "Connect Drive" and "Upload Drive" for a saved item.
+7. If Google Drive OAuth is configured, click "Connect Drive" in the popup or library page, then click "Upload Drive" for a saved item.
 
 ## Required Store Assets
 

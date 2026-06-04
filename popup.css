@@ -9,6 +9,8 @@
   --accent: #0f6bff;
   --accent-pressed: #0b56cf;
   --soft: #eef4ff;
+  --good-soft: #eaf7ee;
+  --good: #137333;
   --danger: #b42318;
 }
 
@@ -18,7 +20,7 @@
 
 body {
   width: 390px;
-  min-height: 300px;
+  min-height: 360px;
   margin: 0;
   background: var(--bg);
   color: var(--text);
@@ -79,6 +81,36 @@ p,
   color: var(--muted);
   font-size: 12px;
   line-height: 1.45;
+}
+
+.panelHead {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.drivePanel {
+  border-color: #c9d7f2;
+  background: #fbfdff;
+}
+
+.drivePanel h2 {
+  margin-bottom: 3px;
+}
+
+.drivePanel button {
+  min-width: 112px;
+}
+
+.drivePanel button:not(:disabled) {
+  border-color: #b7dfc2;
+  background: var(--good-soft);
+  color: var(--good);
+}
+
+.drivePanel button:not(:disabled):hover {
+  background: #ddf2e4;
 }
 
 .controls,

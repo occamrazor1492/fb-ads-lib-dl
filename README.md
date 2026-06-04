@@ -14,6 +14,7 @@ It runs in Chrome. There is no backend service, no shared Facebook account, and 
 - Save media records to a local library.
 - Edit categories, tags, and notes for saved creatives.
 - Filter the local library by keyword, category, or tag.
+- Connect Google Drive from the popup or library page.
 - Upload a saved creative to the user's Google Drive after OAuth setup and user consent.
 
 ## Install Locally
@@ -32,7 +33,8 @@ It runs in Chrome. There is no backend service, no shared Facebook account, and 
 3. Click `Download video`, `Download image`, `Save`, or `Drive` beside the creative you want.
 4. If buttons are not visible yet, open the extension popup and click `Add page buttons`.
 5. Open `Library` from the popup to edit categories, tags, and notes.
-6. Use `Upload Drive` in the library when Google Drive is configured.
+6. Click `Connect Drive` in the popup or library page when Google Drive is configured.
+7. Use `Upload Drive` in the library, or the inline `Drive` button beside a creative.
 
 If Facebook asks you to log in, complete the login in Chrome and scan again. The extension uses your own browser session and does not export your cookies.
 

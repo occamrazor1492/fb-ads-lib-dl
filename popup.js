@@ -1,16 +1,20 @@
 const scanCurrentBtn = document.querySelector("#scanCurrentBtn");
 const openLibraryBtn = document.querySelector("#openLibraryBtn");
+const connectDriveBtn = document.querySelector("#connectDriveBtn");
 const statusText = document.querySelector("#statusText");
+const driveStatusText = document.querySelector("#driveStatusText");
 const resultsPanel = document.querySelector("#resultsPanel");
 const summary = document.querySelector("#summary");
 const mediaList = document.querySelector("#mediaList");
 const downloadBestBtn = document.querySelector("#downloadBestBtn");
 
 let lastResult = null;
+let driveStatus = null;
 
 function setBusy(isBusy, text) {
   scanCurrentBtn.disabled = isBusy;
   openLibraryBtn.disabled = isBusy;
+  connectDriveBtn.disabled = isBusy || !driveStatus?.configured || driveStatus?.connected;
   statusText.textContent = text;
 }
 
@@ -76,6 +80,56 @@ function renderResult(result) {
   `).join("");
 }
 
+function renderDriveStatus(status) {
+  driveStatus = status || {};
+
+  if (!driveStatus.configured) {
+    driveStatusText.textContent = "Setup required in this build before users can connect.";
+    connectDriveBtn.textContent = "Setup required";
+    connectDriveBtn.disabled = true;
+    return;
+  }
+
+  if (driveStatus.connected) {
+    driveStatusText.textContent = driveStatus.folderId
+      ? "Connected. Uploads go to the Ads Library Media Saver folder."
+      : "Connected. The upload folder will be created on first upload.";
+    connectDriveBtn.textContent = "Connected";
+    connectDriveBtn.disabled = true;
+    return;
+  }
+
+  driveStatusText.textContent = "Connect your Google Drive to upload saved creatives.";
+  connectDriveBtn.textContent = "Connect Drive";
+  connectDriveBtn.disabled = false;
+}
+
+async function loadDriveStatus() {
+  try {
+    const response = await extensionMessage({ type: "GET_DRIVE_STATUS" });
+    renderDriveStatus(response.status);
+  } catch (error) {
+    driveStatusText.innerHTML = `<span class="error">${escapeText(error.message)}</span>`;
+    connectDriveBtn.disabled = true;
+  }
+}
+
+async function connectDrive() {
+  connectDriveBtn.disabled = true;
+  connectDriveBtn.textContent = "Connecting...";
+  driveStatusText.textContent = "Opening Google authorization...";
+
+  try {
+    const response = await extensionMessage({ type: "CONNECT_DRIVE" });
+    renderDriveStatus(response.status);
+    statusText.textContent = "Google Drive connected.";
+  } catch (error) {
+    driveStatusText.innerHTML = `<span class="error">${escapeText(error.message)}</span>`;
+    connectDriveBtn.textContent = driveStatus?.configured ? "Connect Drive" : "Setup required";
+    connectDriveBtn.disabled = !driveStatus?.configured;
+  }
+}
+
 async function startScan() {
   setBusy(true, "Adding page buttons...");
   resultsPanel.hidden = true;
@@ -109,6 +163,8 @@ openLibraryBtn.addEventListener("click", async () => {
   }
 });
 
+connectDriveBtn.addEventListener("click", connectDrive);
+
 downloadBestBtn.addEventListener("click", async () => {
   if (!lastResult?.best) return;
   try {
@@ -118,6 +174,8 @@ downloadBestBtn.addEventListener("click", async () => {
     statusText.innerHTML = `<span class="error">${escapeText(error.message)}</span>`;
   }
 });
+
+loadDriveStatus();
 
 mediaList.addEventListener("click", async event => {
   const button = event.target.closest("[data-download-index],[data-save-index]");

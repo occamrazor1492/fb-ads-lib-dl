@@ -14,7 +14,7 @@ Register as a developer and pay the one-time registration fee.
 
 Upload this package:
 
-`ads-library-media-saver-v0.4.1.zip`
+`ads-library-media-saver-v0.4.2.zip`
 
 If you need to regenerate it:
 
@@ -22,7 +22,7 @@ If you need to regenerate it:
 ./scripts/package-extension.sh
 ```
 
-Before submitting v0.4.1 with Google Drive enabled, replace the OAuth placeholder in `manifest.json`. See [GOOGLE_DRIVE_SETUP.md](GOOGLE_DRIVE_SETUP.md).
+Before submitting v0.4.2 with Google Drive enabled, replace the OAuth placeholder in `manifest.json`. See [GOOGLE_DRIVE_SETUP.md](GOOGLE_DRIVE_SETUP.md).
 
 ## 3. Store Listing
 
@@ -54,6 +54,7 @@ Key features:
 - Save media records to a local library.
 - Edit tags, categories, and notes.
 - Filter saved creatives by keyword, tag, or category.
+- Connect Google Drive from the popup or library page.
 - Optionally upload selected saved media to the user's Google Drive.
 
 Important limitations:
@@ -149,7 +150,7 @@ To test:
 4. Click the inline "Save" button beside a creative.
 5. If buttons are not visible yet, open the extension popup and click "Add page buttons."
 6. Open the popup and click "Library" to edit tags and categories.
-7. If Google Drive OAuth is configured, click "Connect Drive" and "Upload Drive" for a saved item.
+7. If Google Drive OAuth is configured, click "Connect Drive" in the popup or library page, then click "Upload Drive" for a saved item.
 
 ## 8. Recommended Release Mode
 
