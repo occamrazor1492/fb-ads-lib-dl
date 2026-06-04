@@ -14,7 +14,7 @@ Register as a developer and pay the one-time registration fee.
 
 Upload this package:
 
-`ads-library-media-saver-v0.4.3.zip`
+`ads-library-media-saver-v0.4.4.zip`
 
 If you need to regenerate it:
 
@@ -22,7 +22,7 @@ If you need to regenerate it:
 ./scripts/package-extension.sh
 ```
 
-Before submitting v0.4.3 with Google Drive enabled, replace the OAuth placeholder in `manifest.json`. See [GOOGLE_DRIVE_SETUP.md](GOOGLE_DRIVE_SETUP.md).
+Before submitting v0.4.4 with Google Drive enabled, replace the OAuth placeholder in `manifest.json`. See [GOOGLE_DRIVE_SETUP.md](GOOGLE_DRIVE_SETUP.md).
 
 ## 3. Store Listing
 

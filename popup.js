@@ -35,6 +35,19 @@ function extensionMessage(message) {
   });
 }
 
+function openExtensionPage(path) {
+  return new Promise((resolve, reject) => {
+    chrome.tabs.create({ url: chrome.runtime.getURL(path) }, tab => {
+      const err = chrome.runtime.lastError;
+      if (err) {
+        reject(new Error(err.message));
+        return;
+      }
+      resolve(tab);
+    });
+  });
+}
+
 function escapeText(value) {
   return String(value ?? "").replace(/[&<>"']/g, char => ({
     "&": "&amp;",
@@ -116,7 +129,7 @@ async function loadDriveStatus() {
 
 async function connectDrive() {
   if (!driveStatus?.configured) {
-    await extensionMessage({ type: "OPEN_DRIVE_SETUP" });
+    await openExtensionPage("drive-setup.html");
     return;
   }
 
