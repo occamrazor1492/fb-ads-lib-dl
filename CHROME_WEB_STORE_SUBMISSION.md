@@ -1,14 +1,38 @@
-# Chrome Web Store Listing Draft
+# Chrome Web Store Submission Checklist
 
-## Extension Name
+Use this file while submitting the extension in the Chrome Web Store Developer Dashboard.
+
+## 1. Developer Account
+
+Open the Chrome Web Store Developer Dashboard:
+
+https://chrome.google.com/webstore/devconsole/
+
+Register as a developer and pay the one-time registration fee.
+
+## 2. Package Upload
+
+Upload this package:
+
+`ads-library-media-saver-v0.2.0.zip`
+
+If you need to regenerate it:
+
+```bash
+./scripts/package-extension.sh
+```
+
+## 3. Store Listing
+
+### Extension Name
 
 Ads Library Media Saver
 
-## Short Description
+### Short Description
 
 Save media from Meta Ads Library pages you can access in your own Chrome session.
 
-## Detailed Description
+### Detailed Description
 
 Ads Library Media Saver helps researchers, marketers, and operators save media from Meta Ads Library pages they can already access in Chrome.
 
@@ -16,7 +40,7 @@ Paste a Meta Ads Library ad link or scan the current Ads Library tab. The extens
 
 The extension runs locally in Chrome. It has no backend service, does not use a shared Facebook account, and does not upload cookies, page content, or media URLs.
 
-### Key Features
+Key features:
 
 - Scan a pasted Meta Ads Library URL.
 - Scan the current Ads Library tab.
@@ -25,22 +49,42 @@ The extension runs locally in Chrome. It has no backend service, does not use a 
 - Save selected media locally through Chrome downloads.
 - Store only the last pasted URL in local extension storage.
 
-### Important Limitations
+Important limitations:
 
 - Designed for single-ad workflows, not bulk scraping.
 - Works only on Ads Library pages your browser session can access.
 - Some ads expose separate video/audio tracks. This MVP does not merge separate tracks inside the extension.
 - Meta may change Ads Library internals, so detection may require future updates.
 
-## Category
+### Category
 
 Productivity
 
-## Language
+### Language
 
 English
 
-## Permission Justifications
+### Website URL
+
+https://github.com/occamrazor1492/fb-ads-lib-dl
+
+### Support URL
+
+https://github.com/occamrazor1492/fb-ads-lib-dl/issues
+
+### Privacy Policy URL
+
+https://occamrazor1492.github.io/fb-ads-lib-dl/privacy.html
+
+## 4. Images
+
+Use these files:
+
+- Icon: `store-assets/icon-128.png`
+- Screenshot: `store-assets/screenshot-1280x800.png`
+- Small promotional tile: `store-assets/small-promo-440x280.png`
+
+## 5. Permission Justifications
 
 ### downloads
 
@@ -67,19 +111,17 @@ The extension requests access only to Meta Ads Library URL patterns:
 
 These permissions allow the scanner to run on Ads Library pages opened by the user.
 
-## Privacy Disclosure Draft
+## 6. Privacy Form
 
-Data collection: No user data is collected, sold, shared, or transmitted.
+Suggested answers:
 
-Remote code: No remote code is loaded.
+- Does the extension collect user data? No.
+- Does the extension transmit data to external servers? No.
+- Does the extension use remote code? No.
+- Does the extension use cookies? It uses the user's existing Chrome session to access pages, but it does not read, export, upload, display, or transmit cookie values.
+- Does the extension store data? It stores only the last pasted Ads Library URL in Chrome local extension storage.
 
-Remote server: No backend server is used.
-
-Cookies: The extension uses the user's existing Chrome session but does not read, display, export, upload, or transmit cookie values.
-
-Local storage: The extension stores only the last pasted Ads Library URL in Chrome local extension storage.
-
-## Reviewer Notes
+## 7. Reviewer Notes
 
 This extension has a single purpose: helping a user save media from Meta Ads Library pages they can already access. It does not automate bulk scraping, does not collect data, and does not send any data to an external server.
 
@@ -91,20 +133,6 @@ To test:
 4. Click "Current tab" or paste the Ads Library URL and click "Scan."
 5. Click a download button for a detected asset.
 
-## Required Store Assets
+## 8. Recommended Release Mode
 
-Generated draft assets are in `store-assets/`:
-
-- `screenshot-1280x800.png`
-- `small-promo-440x280.png`
-- `icon-128.png`
-
-Before final submission, review the screenshots and replace them with product screenshots if desired.
-
-## Support URL
-
-https://github.com/occamrazor1492/fb-ads-lib-dl/issues
-
-## Privacy Policy URL
-
-https://occamrazor1492.github.io/fb-ads-lib-dl/privacy.html
+For the first submission, consider publishing as `Unlisted` or to a small trusted tester group if available. After review and real-world testing, switch to public distribution.
