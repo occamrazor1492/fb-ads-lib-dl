@@ -7,7 +7,6 @@ It runs in Chrome. There is no backend service, no shared Facebook account, and 
 ## Features
 
 - Add Download, Save, and Drive buttons beside visible Ads Library images and videos.
-- Paste a Meta Ads Library URL and open it in a normal Chrome tab.
 - Refresh buttons on the currently active Facebook Ads Library tab.
 - Detect MP4 video assets and image assets already present in the loaded page data.
 - Prefer media from the clicked creative card when one is available.
@@ -50,7 +49,7 @@ The extension requests:
 - `downloads`: starts downloads when the user clicks a download button.
 - `identity`: lets the user authorize Google Drive upload with their own Google account.
 - `scripting`: refreshes the scanner and inline buttons on the current Facebook/Ads Library page.
-- `storage`: saves the last pasted URL, saved media records, tags, categories, notes, and Drive folder metadata locally.
+- `storage`: saves media records, tags, categories, notes, and Drive folder metadata locally.
 - `tabs`: opens the requested Ads Library tab and refreshes the active Ads Library tab.
 - Facebook Ads Library host permissions: reads media URLs from Ads Library pages the user has opened and adds inline action buttons.
 - Facebook CDN host permissions: reads a user-selected saved media URL when uploading that item to Drive.

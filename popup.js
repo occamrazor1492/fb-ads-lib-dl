@@ -1,5 +1,3 @@
-const adUrl = document.querySelector("#adUrl");
-const scanBtn = document.querySelector("#scanBtn");
 const scanCurrentBtn = document.querySelector("#scanCurrentBtn");
 const openLibraryBtn = document.querySelector("#openLibraryBtn");
 const statusText = document.querySelector("#statusText");
@@ -11,7 +9,6 @@ const downloadBestBtn = document.querySelector("#downloadBestBtn");
 let lastResult = null;
 
 function setBusy(isBusy, text) {
-  scanBtn.disabled = isBusy;
   scanCurrentBtn.disabled = isBusy;
   openLibraryBtn.disabled = isBusy;
   statusText.textContent = text;
@@ -61,7 +58,7 @@ function renderResult(result) {
   resultsPanel.hidden = false;
   downloadBestBtn.disabled = !result.best;
   summary.textContent = media.length
-    ? `${buttonCount || "Page"} download button${buttonCount === 1 ? "" : "s"} added. Popup results remain available as a fallback.`
+    ? `${buttonCount || "Page"} action button group${buttonCount === 1 ? "" : "s"} added beside visible media.`
     : "No downloadable media was found on the loaded page.";
 
   mediaList.innerHTML = media.map((item, index) => `
@@ -79,15 +76,15 @@ function renderResult(result) {
   `).join("");
 }
 
-async function startScan(url, currentTab = false) {
-  setBusy(true, currentTab ? "Adding page buttons..." : "Opening page and adding buttons...");
+async function startScan() {
+  setBusy(true, "Adding page buttons...");
   resultsPanel.hidden = true;
   mediaList.innerHTML = "";
 
   try {
     const response = await extensionMessage({
-      type: currentTab ? "SCAN_CURRENT_TAB" : "SCAN_URL",
-      url
+      type: "SCAN_CURRENT_TAB",
+      url: ""
     });
     renderResult(response.result);
     statusText.textContent = response.result?.inlineButtons?.buttons
@@ -100,17 +97,8 @@ async function startScan(url, currentTab = false) {
   }
 }
 
-scanBtn.addEventListener("click", () => {
-  const url = adUrl.value.trim();
-  if (!url) {
-    statusText.innerHTML = '<span class="error">Paste an Ads Library link first.</span>';
-    return;
-  }
-  startScan(url, false);
-});
-
 scanCurrentBtn.addEventListener("click", () => {
-  startScan("", true);
+  startScan();
 });
 
 openLibraryBtn.addEventListener("click", async () => {
@@ -148,8 +136,4 @@ mediaList.addEventListener("click", async event => {
   } catch (error) {
     statusText.innerHTML = `<span class="error">${escapeText(error.message)}</span>`;
   }
-});
-
-chrome.storage.local.get(["lastAdsLibraryUrl"], data => {
-  if (data.lastAdsLibraryUrl) adUrl.value = data.lastAdsLibraryUrl;
 });

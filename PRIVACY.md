@@ -8,7 +8,7 @@ The extension does not collect, sell, share, transmit, or store personal data on
 
 ## Browser Access
 
-The extension can access Facebook Ads Library pages only to scan pages that the user opens or submits. It can access Facebook CDN media URLs only when the user chooses to download, save, or upload a selected media item. It uses the user's existing browser session, but it does not read, export, upload, display, or transmit cookie values.
+The extension can access Facebook Ads Library pages only to scan pages that the user opens in Chrome. It can access Facebook CDN media URLs only when the user chooses to download, save, or upload a selected media item. It uses the user's existing browser session, but it does not read, export, upload, display, or transmit cookie values.
 
 ## Downloads
 
@@ -16,7 +16,7 @@ When the user clicks a download button, Chrome downloads the selected media URL 
 
 ## Local Storage
 
-The extension stores the last pasted Ads Library URL, saved media records, tags, categories, notes, and Google Drive folder metadata locally in Chrome extension storage. The user can clear this by removing the extension or clearing extension data.
+The extension stores saved media records, tags, categories, notes, and Google Drive folder metadata locally in Chrome extension storage. The user can clear this by removing the extension or clearing extension data.
 
 ## Google Drive
 

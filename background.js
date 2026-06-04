@@ -14,8 +14,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
 async function handleMessage(message) {
   switch (message?.type) {
-    case "SCAN_URL":
-      return { result: await scanUrl(message.url) };
     case "SCAN_CURRENT_TAB":
       return { result: await scanCurrentTab() };
     case "INSTALL_INLINE_BUTTONS":
@@ -44,14 +42,6 @@ async function handleMessage(message) {
     default:
       throw new Error("Unknown request.");
   }
-}
-
-async function scanUrl(rawUrl) {
-  const url = normalizeFacebookUrl(rawUrl);
-  await chrome.storage.local.set({ lastAdsLibraryUrl: url });
-  const tab = await chrome.tabs.create({ url, active: true });
-  await waitForTabLoad(tab.id);
-  return scanTab(tab.id, url);
 }
 
 async function scanCurrentTab() {
@@ -111,40 +101,21 @@ async function installInlineButtons(tabId) {
   }
 }
 
-async function waitForTabLoad(tabId) {
-  const tab = await chrome.tabs.get(tabId);
-  if (tab.status === "complete") {
-    await delay(2000);
-    return;
-  }
-
-  await new Promise(resolve => {
-    const listener = (updatedTabId, changeInfo) => {
-      if (updatedTabId === tabId && changeInfo.status === "complete") {
-        chrome.tabs.onUpdated.removeListener(listener);
-        resolve();
-      }
-    };
-    chrome.tabs.onUpdated.addListener(listener);
-  });
-  await delay(4000);
-}
-
 function normalizeFacebookUrl(rawUrl) {
   let url;
   try {
     url = new URL(String(rawUrl || "").trim());
   } catch {
-    throw new Error("Paste a valid Meta Ads Library or Facebook URL.");
+    throw new Error("Open a valid Meta Ads Library page first.");
   }
 
   const allowedHosts = new Set(["www.facebook.com", "web.facebook.com", "facebook.com"]);
   if (!allowedHosts.has(url.hostname)) {
-    throw new Error("Only facebook.com Ads Library links are supported.");
+    throw new Error("Only facebook.com Ads Library pages are supported.");
   }
 
   if (!isAdsLibraryPath(url)) {
-    throw new Error("Open or paste a Meta Ads Library URL, such as https://www.facebook.com/ads/library/?id=...");
+    throw new Error("Open a Meta Ads Library page first.");
   }
 
   url.hostname = "www.facebook.com";

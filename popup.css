@@ -18,7 +18,7 @@
 
 body {
   width: 390px;
-  min-height: 420px;
+  min-height: 300px;
   margin: 0;
   background: var(--bg);
   color: var(--text);
@@ -79,33 +79,6 @@ p,
   color: var(--muted);
   font-size: 12px;
   line-height: 1.45;
-}
-
-label {
-  display: block;
-  margin-bottom: 6px;
-  color: #344054;
-  font-size: 12px;
-  font-weight: 650;
-}
-
-textarea {
-  width: 100%;
-  resize: vertical;
-  min-height: 88px;
-  border: 1px solid var(--line);
-  border-radius: 7px;
-  padding: 10px;
-  color: var(--text);
-  font: inherit;
-  font-size: 12px;
-  line-height: 1.4;
-  outline: none;
-}
-
-textarea:focus {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(15, 107, 255, 0.12);
 }
 
 .controls,

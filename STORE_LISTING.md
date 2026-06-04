@@ -22,7 +22,6 @@ The extension runs in Chrome. It has no developer-controlled backend service, do
 
 - Add action buttons beside visible Ads Library creatives.
 - Refresh buttons on the current Ads Library tab.
-- Open a pasted Meta Ads Library URL.
 - Detect MP4 video assets and image assets.
 - Prefer media from the clicked creative card when available.
 - Save selected media locally through Chrome downloads.
@@ -64,11 +63,11 @@ Used to inject or refresh the scanner and inline action buttons on Meta Ads Libr
 
 ### storage
 
-Used to remember the last pasted Ads Library URL, saved media records, tags, categories, notes, and Drive folder metadata locally in Chrome extension storage.
+Used to remember saved media records, tags, categories, notes, and Drive folder metadata locally in Chrome extension storage.
 
 ### tabs
 
-Used to open the submitted Ads Library URL in a normal Chrome tab and to refresh the active Ads Library tab when the user clicks "Add page buttons."
+Used to find and refresh the active Ads Library tab when the user clicks "Add page buttons" and to open the saved media library page.
 
 ### Host permissions
 
@@ -92,7 +91,7 @@ Remote server: No developer-controlled backend server is used.
 
 Cookies: The extension uses the user's existing Chrome session but does not read, display, export, upload, or transmit cookie values.
 
-Local storage: The extension stores the last pasted Ads Library URL, saved media records, tags, categories, notes, and Drive folder metadata in Chrome local extension storage.
+Local storage: The extension stores saved media records, tags, categories, notes, and Drive folder metadata in Chrome local extension storage.
 
 Google Drive: Optional. When a user connects Drive and uploads a saved item, the selected media file is sent from Chrome to the user's Google Drive through Google's APIs.
 

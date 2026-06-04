@@ -14,7 +14,7 @@ Register as a developer and pay the one-time registration fee.
 
 Upload this package:
 
-`ads-library-media-saver-v0.4.0.zip`
+`ads-library-media-saver-v0.4.1.zip`
 
 If you need to regenerate it:
 
@@ -22,7 +22,7 @@ If you need to regenerate it:
 ./scripts/package-extension.sh
 ```
 
-Before submitting v0.4.0 with Google Drive enabled, replace the OAuth placeholder in `manifest.json`. See [GOOGLE_DRIVE_SETUP.md](GOOGLE_DRIVE_SETUP.md).
+Before submitting v0.4.1 with Google Drive enabled, replace the OAuth placeholder in `manifest.json`. See [GOOGLE_DRIVE_SETUP.md](GOOGLE_DRIVE_SETUP.md).
 
 ## 3. Store Listing
 
@@ -48,7 +48,6 @@ Key features:
 
 - Add action buttons beside visible Ads Library creatives.
 - Refresh buttons on the current Ads Library tab.
-- Open a pasted Meta Ads Library URL.
 - Detect MP4 video assets and image assets.
 - Prefer media from the clicked creative card when available.
 - Save selected media locally through Chrome downloads.
@@ -110,11 +109,11 @@ Used to inject or refresh the scanner and inline action buttons on Meta Ads Libr
 
 ### storage
 
-Used to remember the last pasted Ads Library URL, saved media records, tags, categories, notes, and Drive folder metadata locally in Chrome extension storage.
+Used to remember saved media records, tags, categories, notes, and Drive folder metadata locally in Chrome extension storage.
 
 ### tabs
 
-Used to open the submitted Ads Library URL in a normal Chrome tab and to refresh the active Ads Library tab when the user clicks "Add page buttons."
+Used to find and refresh the active Ads Library tab when the user clicks "Add page buttons" and to open the saved media library page.
 
 ### Host permissions
 
@@ -136,7 +135,7 @@ Suggested answers:
 - Does the extension transmit data to external servers? Only when the user chooses Google Drive upload; the selected media file is sent from Chrome to the user's Google Drive through Google's APIs.
 - Does the extension use remote code? No.
 - Does the extension use cookies? It uses the user's existing Chrome session to access pages, but it does not read, export, upload, display, or transmit cookie values.
-- Does the extension store data? It stores the last pasted Ads Library URL, saved media records, tags, categories, notes, and Drive folder metadata in Chrome local extension storage.
+- Does the extension store data? It stores saved media records, tags, categories, notes, and Drive folder metadata in Chrome local extension storage.
 
 ## 7. Reviewer Notes
 
