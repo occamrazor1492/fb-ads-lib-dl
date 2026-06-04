@@ -35,19 +35,6 @@ function extensionMessage(message) {
   });
 }
 
-function openExtensionPage(path) {
-  return new Promise((resolve, reject) => {
-    chrome.tabs.create({ url: chrome.runtime.getURL(path) }, tab => {
-      const err = chrome.runtime.lastError;
-      if (err) {
-        reject(new Error(err.message));
-        return;
-      }
-      resolve(tab);
-    });
-  });
-}
-
 function escapeText(value) {
   return String(value ?? "").replace(/[&<>"']/g, char => ({
     "&": "&amp;",
@@ -97,9 +84,9 @@ function renderDriveStatus(status) {
   driveStatus = status || {};
 
   if (!driveStatus.configured) {
-    driveStatusText.textContent = "Google OAuth setup is required before users can connect.";
-    connectDriveBtn.textContent = "Drive setup";
-    connectDriveBtn.disabled = false;
+    driveStatusText.textContent = "Google Drive is unavailable in this build.";
+    connectDriveBtn.textContent = "Unavailable";
+    connectDriveBtn.disabled = true;
     return;
   }
 
@@ -128,11 +115,6 @@ async function loadDriveStatus() {
 }
 
 async function connectDrive() {
-  if (!driveStatus?.configured) {
-    await openExtensionPage("drive-setup.html");
-    return;
-  }
-
   connectDriveBtn.disabled = true;
   connectDriveBtn.textContent = "Connecting...";
   driveStatusText.textContent = "Opening Google authorization...";
@@ -143,8 +125,8 @@ async function connectDrive() {
     statusText.textContent = "Google Drive connected.";
   } catch (error) {
     driveStatusText.innerHTML = `<span class="error">${escapeText(error.message)}</span>`;
-    connectDriveBtn.textContent = driveStatus?.configured ? "Connect Drive" : "Drive setup";
-    connectDriveBtn.disabled = false;
+    connectDriveBtn.textContent = "Connect Drive";
+    connectDriveBtn.disabled = !driveStatus?.configured;
   }
 }
 

@@ -354,7 +354,7 @@
 
   function errorTextForAction(action) {
     if (action === "save") return "Save failed";
-    if (action === "drive") return "Drive setup";
+    if (action === "drive") return "Drive failed";
     return "Not found";
   }
 

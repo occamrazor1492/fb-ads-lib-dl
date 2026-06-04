@@ -2,7 +2,7 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-OUT_FILE="${ROOT_DIR}/ads-library-media-saver-v0.4.4.zip"
+OUT_FILE="${ROOT_DIR}/ads-library-media-saver-v0.5.0.zip"
 
 cd "$ROOT_DIR"
 rm -f "$OUT_FILE"
@@ -16,7 +16,6 @@ zip -r "$OUT_FILE" \
   library.html \
   library.css \
   library.js \
-  drive-setup.html \
   icons \
   README.md \
   GOOGLE_DRIVE_SETUP.md \

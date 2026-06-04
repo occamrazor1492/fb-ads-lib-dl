@@ -14,8 +14,8 @@ It runs in Chrome. There is no backend service, no shared Facebook account, and 
 - Save media records to a local library.
 - Edit categories, tags, and notes for saved creatives.
 - Filter the local library by keyword, category, or tag.
-- Connect Google Drive from the popup or library page. If OAuth is not configured yet, the button opens a setup guide.
-- Upload a saved creative to the user's Google Drive after OAuth setup and user consent.
+- Connect Google Drive from the popup or library page.
+- Upload a saved creative to the user's Google Drive after user authorization.
 
 ## Install Locally
 
@@ -33,16 +33,16 @@ It runs in Chrome. There is no backend service, no shared Facebook account, and 
 3. Click `Download video`, `Download image`, `Save`, or `Drive` beside the creative you want.
 4. If buttons are not visible yet, open the extension popup and click `Add page buttons`.
 5. Open `Library` from the popup to edit categories, tags, and notes.
-6. Click `Connect Drive` in the popup or library page when Google Drive is configured.
+6. Click `Connect Drive` in the popup or library page and approve Google's authorization prompt.
 7. Use `Upload Drive` in the library, or the inline `Drive` button beside a creative.
 
 If Facebook asks you to log in, complete the login in Chrome and scan again. The extension uses your own browser session and does not export your cookies.
 
 ## Google Drive
 
-Drive upload uses Chrome's `identity` API and the Google Drive API with the `drive.file` scope. The extension cannot upload to Drive until you create a Google OAuth Client ID for the published Chrome extension ID and replace the placeholder in `manifest.json`.
+Drive upload uses Chrome's `identity` API and the Google Drive API with the `drive.file` scope. Users connect their own Google account from the extension popup or library page.
 
-See [GOOGLE_DRIVE_SETUP.md](GOOGLE_DRIVE_SETUP.md).
+Maintainers can see [GOOGLE_DRIVE_SETUP.md](GOOGLE_DRIVE_SETUP.md) if the Chrome Web Store extension ID changes and a new OAuth client is needed.
 
 ## Permissions
 
@@ -52,7 +52,7 @@ The extension requests:
 - `identity`: lets the user authorize Google Drive upload with their own Google account.
 - `scripting`: refreshes the scanner and inline buttons on the current Facebook/Ads Library page.
 - `storage`: saves media records, tags, categories, notes, and Drive folder metadata locally.
-- `tabs`: opens the requested Ads Library tab and refreshes the active Ads Library tab.
+- `tabs`: finds and refreshes the active Ads Library tab, opens the saved media library page, and opens Google authorization when the user connects Drive.
 - Facebook Ads Library host permissions: reads media URLs from Ads Library pages the user has opened and adds inline action buttons.
 - Facebook CDN host permissions: reads a user-selected saved media URL when uploading that item to Drive.
 - Google APIs host permission: uploads a user-selected saved media file to Google Drive.
@@ -68,7 +68,7 @@ The extension does not collect, sell, share, or transmit personal data to the de
 - Some ads expose only separate DASH video/audio tracks. This MVP downloads exposed assets but does not merge separate tracks inside the extension.
 - On video ads where Meta exposes only a streaming blob to the visible player, the button falls back to media URLs found near that card or in the loaded page data.
 - The extension can only access content that the user's own browser session is allowed to load.
-- Google Drive upload requires a configured OAuth Client ID and may fail when Meta serves a short-lived media URL that Chrome can no longer fetch.
+- Google Drive upload may fail when Meta serves a short-lived media URL that Chrome can no longer fetch.
 
 ## Development
 

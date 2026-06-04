@@ -31,19 +31,6 @@ function extensionMessage(message) {
   });
 }
 
-function openExtensionPage(path) {
-  return new Promise((resolve, reject) => {
-    chrome.tabs.create({ url: chrome.runtime.getURL(path) }, tab => {
-      const err = chrome.runtime.lastError;
-      if (err) {
-        reject(new Error(err.message));
-        return;
-      }
-      resolve(tab);
-    });
-  });
-}
-
 async function loadLibrary() {
   setLoading(true);
   try {
@@ -80,8 +67,9 @@ function renderDriveStatus() {
 
   if (!currentDriveStatus?.configured) {
     driveStatus.classList.add("warning");
-    driveStatus.textContent = "Google Drive setup required: add a Chrome extension OAuth Client ID in manifest.json.";
-    connectDriveBtn.textContent = "Drive setup";
+    driveStatus.textContent = "Google Drive is unavailable in this build.";
+    connectDriveBtn.textContent = "Unavailable";
+    connectDriveBtn.disabled = true;
     return;
   }
 
@@ -283,11 +271,6 @@ function readCardPatch(card) {
 }
 
 async function connectDrive() {
-  if (!currentDriveStatus?.configured) {
-    await openExtensionPage("drive-setup.html");
-    return;
-  }
-
   connectDriveBtn.disabled = true;
   const originalText = connectDriveBtn.textContent;
   connectDriveBtn.textContent = "Connecting...";

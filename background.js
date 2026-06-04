@@ -33,9 +33,6 @@ async function handleMessage(message) {
     case "OPEN_LIBRARY":
       await chrome.tabs.create({ url: chrome.runtime.getURL("library.html") });
       return {};
-    case "OPEN_DRIVE_SETUP":
-      await chrome.tabs.create({ url: chrome.runtime.getURL("drive-setup.html") });
-      return {};
     case "CONNECT_DRIVE":
       return { status: await connectDrive() };
     case "GET_DRIVE_STATUS":
@@ -448,7 +445,7 @@ async function getDriveSettings() {
 
 function ensureDriveConfigured() {
   if (!isDriveConfigured()) {
-    throw new Error("Google Drive is not configured yet. Add your Google OAuth Client ID to manifest.json before using Drive upload.");
+    throw new Error("Google Drive is unavailable in this build.");
   }
 }
 

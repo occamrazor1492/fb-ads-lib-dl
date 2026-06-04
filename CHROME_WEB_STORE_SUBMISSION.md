@@ -14,7 +14,7 @@ Register as a developer and pay the one-time registration fee.
 
 Upload this package:
 
-`ads-library-media-saver-v0.4.4.zip`
+`ads-library-media-saver-v0.5.0.zip`
 
 If you need to regenerate it:
 
@@ -22,7 +22,7 @@ If you need to regenerate it:
 ./scripts/package-extension.sh
 ```
 
-Before submitting v0.4.4 with Google Drive enabled, replace the OAuth placeholder in `manifest.json`. See [GOOGLE_DRIVE_SETUP.md](GOOGLE_DRIVE_SETUP.md).
+Google Drive OAuth is configured for the Chrome Web Store extension ID in `manifest.json`.
 
 ## 3. Store Listing
 
@@ -64,7 +64,7 @@ Important limitations:
 - Some ads expose separate video/audio tracks. This MVP does not merge separate tracks inside the extension.
 - Some visible Meta video players use streaming blobs; in that case the extension falls back to URLs found near the creative card or in the loaded page data.
 - Meta may change Ads Library internals, so detection may require future updates.
-- Google Drive upload requires a configured Google OAuth Client ID.
+- Google Drive upload requires user authorization.
 
 ### Category
 
@@ -150,7 +150,7 @@ To test:
 4. Click the inline "Save" button beside a creative.
 5. If buttons are not visible yet, open the extension popup and click "Add page buttons."
 6. Open the popup and click "Library" to edit tags and categories.
-7. If Google Drive OAuth is configured, click "Connect Drive" in the popup or library page, then click "Upload Drive" for a saved item.
+7. Click "Connect Drive" in the popup or library page, approve the Google authorization prompt, then click "Upload Drive" for a saved item.
 
 ## 8. Recommended Release Mode
 

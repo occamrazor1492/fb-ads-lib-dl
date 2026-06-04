@@ -28,7 +28,7 @@ The extension runs in Chrome. It has no developer-controlled backend service, do
 - Save media records to a local library.
 - Edit tags, categories, and notes.
 - Filter saved creatives by keyword, tag, or category.
-- Connect Google Drive from the popup or library page. If OAuth is not configured yet, the button opens a setup guide.
+- Connect Google Drive from the popup or library page.
 - Optionally upload selected saved media to the user's Google Drive.
 
 ### Important Limitations
@@ -38,7 +38,7 @@ The extension runs in Chrome. It has no developer-controlled backend service, do
 - Some ads expose separate video/audio tracks. This MVP does not merge separate tracks inside the extension.
 - Some visible Meta video players use streaming blobs; in that case the extension falls back to URLs found near the creative card or in the loaded page data.
 - Meta may change Ads Library internals, so detection may require future updates.
-- Google Drive upload requires a configured Google OAuth Client ID.
+- Google Drive upload requires user authorization.
 
 ## Category
 

@@ -2,6 +2,8 @@
 
 Google Drive upload needs a Google OAuth Client ID for the published Chrome extension. The OAuth client ID is not a secret, but it must match the Chrome Web Store extension ID.
 
+The current Chrome Web Store extension already has an OAuth client configured in `manifest.json`. Use this document only if the extension ID changes or a new Google Cloud project is needed.
+
 Current Chrome Web Store extension ID:
 
 ```text
@@ -51,11 +53,11 @@ Copy the generated client ID.
 
 ## 5. Update manifest.json
 
-Replace the placeholder in `manifest.json`:
+Replace the client ID in `manifest.json`:
 
 ```json
 "oauth2": {
-  "client_id": "REPLACE_WITH_GOOGLE_OAUTH_CLIENT_ID.apps.googleusercontent.com",
+  "client_id": "430077276006-pullvvv113pggg1pf90r9d0d6d4v0m14.apps.googleusercontent.com",
   "scopes": [
     "https://www.googleapis.com/auth/drive.file"
   ]
@@ -72,7 +74,7 @@ Run:
 ./scripts/package-extension.sh
 ```
 
-Upload the generated `ads-library-media-saver-v0.4.0.zip` to the Chrome Web Store draft.
+Upload the generated package to the Chrome Web Store draft.
 
 ## Notes For Store Review
 
@@ -80,4 +82,4 @@ Upload the generated `ads-library-media-saver-v0.4.0.zip` to the Chrome Web Stor
 - The extension does not create a developer-hosted account or backend profile.
 - Saved media records, tags, categories, and notes stay in local Chrome extension storage.
 - When the user uploads to Drive, the selected media file is sent from Chrome to Google Drive through Google's API.
-- Do not submit a package with the placeholder OAuth client ID if Drive upload is listed as a working feature.
+- Do not submit a package with a placeholder OAuth client ID if Drive upload is listed as a working feature.
