@@ -1,8 +1,8 @@
 # Google Drive Setup
 
-Google Drive upload needs a Google OAuth Client ID for the published Chrome extension. The OAuth client ID is not a secret, but it must match the Chrome Web Store extension ID.
+Google Drive upload uses `chrome.identity.launchWebAuthFlow` with a Google OAuth Web client. The OAuth client ID is not a secret, but every extension ID that runs Drive auth needs an authorized `chromiumapp.org` redirect URI.
 
-The current Chrome Web Store extension already has an OAuth client configured in `manifest.json`. Use this document only if the extension ID changes or a new Google Cloud project is needed.
+The current extension already has a Web OAuth client configured in `background.js`. Use this document only if the Chrome Web Store extension ID changes, another local unpacked extension ID needs Drive testing, or a new Google Cloud project is needed.
 
 Current Chrome Web Store extension ID:
 
@@ -40,45 +40,50 @@ The `drive.file` scope lets the extension create and access files that the user 
 
 ## 4. Create The OAuth Client
 
-Open Credentials:
+Open OAuth clients:
 
-https://console.cloud.google.com/apis/credentials
+https://console.cloud.google.com/auth/clients
 
 Create an OAuth Client ID:
 
-- Application type: `Chrome Extension`
-- Application ID: `enfijcghckbajcdnckjjcibiphimfipi`
+- Application type: `Web application`
+- Name: `Ads Library Media Saver Drive WebAuthFlow`
 
-Copy the generated client ID.
+Add authorized redirect URIs:
 
-## 5. Update manifest.json
+```text
+https://enfijcghckbajcdnckjjcibiphimfipi.chromiumapp.org/drive
+```
 
-Replace the client ID in `manifest.json`:
+This URI is the Chrome Web Store extension. If Chrome assigns a local unpacked ID for development, add another URI in the same format:
 
-```json
-"oauth2": {
-  "client_id": "430077276006-pullvvv113pggg1pf90r9d0d6d4v0m14.apps.googleusercontent.com",
-  "scopes": [
-    "https://www.googleapis.com/auth/drive.file"
-  ]
-}
+```text
+https://<extension-id>.chromiumapp.org/drive
+```
+
+Copy the generated Web client ID.
+
+## 5. Update background.js
+
+Replace the Web client ID in `background.js`:
+
+```js
+const DRIVE_OAUTH_CLIENT_ID = "430077276006-23lv6l53s2duv4gskmqohv5srhfoug2k.apps.googleusercontent.com";
 ```
 
 with the real client ID from Google Cloud.
 
 ## Local Unpacked Testing
 
-Chrome OAuth clients are tied to one extension ID. The current OAuth client is tied to the Chrome Web Store item ID:
+The extension uses `chrome.identity.getRedirectURL("drive")`, which resolves to:
 
 ```text
-enfijcghckbajcdnckjjcibiphimfipi
+https://<current-extension-id>.chromiumapp.org/drive
 ```
 
-If you load this repository with `Load unpacked`, Chrome may assign a different local extension ID. In that case, Google Drive sign-in can fail with `bad client id` even when the OAuth client is correct.
+If Drive auth fails with `redirect_uri_mismatch`, copy the redirect URI shown by the extension error and add it to the Web OAuth client's authorized redirect URIs in Google Cloud.
 
-For Drive testing, install the Chrome Web Store draft/published build. If you must test with `Load unpacked`, open the item's Package tab in the Chrome Web Store Developer Dashboard, copy the public key, and add it to `manifest.json` as the `key` field so the unpacked extension keeps the Web Store item ID.
-
-Google also notes that OAuth client changes can take 5 minutes to a few hours to take effect. If the Web Store build still shows `bad client id` immediately after creating or changing the OAuth client, reload the extension and try again later.
+Google notes that OAuth client changes can take 5 minutes to a few hours to take effect. If the redirect URI was just added, reload the extension and try again later.
 
 ## 6. Repackage The Extension
 
@@ -96,4 +101,4 @@ Upload the generated package to the Chrome Web Store draft.
 - The extension does not create a developer-hosted account or backend profile.
 - Saved media records, tags, categories, and notes stay in local Chrome extension storage.
 - When the user uploads to Drive, the selected media file is sent from Chrome to Google Drive through Google's API.
-- Do not submit a package with a placeholder OAuth client ID if Drive upload is listed as a working feature.
+- Do not submit a package with a placeholder Web OAuth client ID if Drive upload is listed as a working feature.

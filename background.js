@@ -4,7 +4,9 @@ const LIBRARY_ITEMS_KEY = "libraryItems";
 const DRIVE_SETTINGS_KEY = "driveSettings";
 const DRIVE_FOLDER_NAME = "Ads Library Media Saver";
 const DRIVE_SCOPE = "https://www.googleapis.com/auth/drive.file";
-const CHROME_WEB_STORE_EXTENSION_ID = "enfijcghckbajcdnckjjcibiphimfipi";
+const DRIVE_OAUTH_CLIENT_ID = "430077276006-23lv6l53s2duv4gskmqohv5srhfoug2k.apps.googleusercontent.com";
+const DRIVE_REDIRECT_PATH = "drive";
+const DRIVE_TOKEN_REFRESH_MARGIN_MS = 5 * 60 * 1000;
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   handleMessage(message, sender)
@@ -425,35 +427,95 @@ async function driveFetch(url, options, token) {
 }
 
 async function getDriveToken(interactive) {
-  if (!chrome.identity?.getAuthToken) {
+  if (!chrome.identity?.launchWebAuthFlow || !chrome.identity?.getRedirectURL) {
     throw new Error("Google Drive sign-in is unavailable in this Chrome profile.");
   }
 
-  let result;
-  try {
-    result = await chrome.identity.getAuthToken({
-      interactive,
-      enableGranularPermissions: true,
-      scopes: [DRIVE_SCOPE]
-    });
-  } catch (error) {
-    throw new Error(formatDriveAuthError(error));
+  const settings = await getDriveSettings();
+  if (settings.accessToken && !isDriveTokenExpired(settings)) {
+    return settings.accessToken;
   }
 
-  const token = typeof result === "string" ? result : result?.token;
-  if (!token) throw new Error("Google Drive authorization did not return an access token.");
-  return token;
+  if (!interactive) {
+    throw new Error("Google Drive authorization expired. Connect Drive again.");
+  }
+
+  const redirectUri = chrome.identity.getRedirectURL(DRIVE_REDIRECT_PATH);
+  try {
+    const tokenInfo = await requestDriveToken({ interactive, redirectUri });
+    await chrome.storage.local.set({
+      [DRIVE_SETTINGS_KEY]: {
+        ...settings,
+        accessToken: tokenInfo.accessToken,
+        tokenExpiresAt: tokenInfo.expiresAt,
+        connectedAt: settings.connectedAt || new Date().toISOString()
+      }
+    });
+    return tokenInfo.accessToken;
+  } catch (error) {
+    throw new Error(formatDriveAuthError(error, redirectUri));
+  }
 }
 
-function formatDriveAuthError(error) {
-  const message = error?.message || String(error);
-  if (!/bad client id/i.test(message)) return message;
+async function requestDriveToken({ interactive, redirectUri }) {
+  const state = createItemId(redirectUri);
+  const authUrl = new URL("https://accounts.google.com/o/oauth2/v2/auth");
+  authUrl.searchParams.set("client_id", DRIVE_OAUTH_CLIENT_ID);
+  authUrl.searchParams.set("redirect_uri", redirectUri);
+  authUrl.searchParams.set("response_type", "token");
+  authUrl.searchParams.set("scope", DRIVE_SCOPE);
+  authUrl.searchParams.set("include_granted_scopes", "true");
+  authUrl.searchParams.set("state", state);
 
-  if (chrome.runtime.id !== CHROME_WEB_STORE_EXTENSION_ID) {
-    return `Google Drive authorization is configured for the Chrome Web Store extension ID ${CHROME_WEB_STORE_EXTENSION_ID}, but this build is running as ${chrome.runtime.id}. Install the Chrome Web Store build to test Drive, or add the Web Store public key to manifest.json before loading unpacked.`;
+  const responseUrl = await chrome.identity.launchWebAuthFlow({
+    url: authUrl.toString(),
+    interactive
+  });
+
+  if (!responseUrl) throw new Error("Google Drive authorization did not return a redirect URL.");
+
+  const params = parseOAuthRedirect(responseUrl);
+  if (params.get("error")) {
+    throw new Error(params.get("error_description") || params.get("error"));
+  }
+  if (params.get("state") && params.get("state") !== state) {
+    throw new Error("Google Drive authorization returned an invalid state.");
   }
 
-  return "Google Drive authorization is not ready yet. Google OAuth settings can take 5 minutes to a few hours to propagate. Reload the extension and try again later.";
+  const accessToken = params.get("access_token");
+  if (!accessToken) throw new Error("Google Drive authorization did not return an access token.");
+
+  const expiresInSeconds = Number(params.get("expires_in") || 3600);
+  return {
+    accessToken,
+    expiresAt: Date.now() + Math.max(60, expiresInSeconds) * 1000
+  };
+}
+
+function parseOAuthRedirect(responseUrl) {
+  const parsed = new URL(responseUrl);
+  const fragmentParams = new URLSearchParams(parsed.hash.replace(/^#/, ""));
+  if ([...fragmentParams.keys()].length) return fragmentParams;
+  return new URLSearchParams(parsed.search.replace(/^\?/, ""));
+}
+
+function isDriveTokenExpired(settings) {
+  const expiresAt = Number(settings.tokenExpiresAt || 0);
+  return !expiresAt || Date.now() + DRIVE_TOKEN_REFRESH_MARGIN_MS >= expiresAt;
+}
+
+function formatDriveAuthError(error, redirectUri) {
+  const message = error?.message || String(error);
+
+  if (/redirect_uri_mismatch/i.test(message)) {
+    return `Google Drive authorization is missing this redirect URI in Google Cloud: ${redirectUri}`;
+  }
+
+  if (/access_denied/i.test(message)) {
+    return "Google Drive authorization was canceled.";
+  }
+
+  return message;
 }
 
 async function getDriveSettings() {
@@ -468,7 +530,7 @@ function ensureDriveConfigured() {
 }
 
 function isDriveConfigured() {
-  const clientId = chrome.runtime.getManifest().oauth2?.client_id || "";
+  const clientId = DRIVE_OAUTH_CLIENT_ID;
   return Boolean(clientId && !/REPLACE_WITH|YOUR_EXTENSION/i.test(clientId));
 }
 

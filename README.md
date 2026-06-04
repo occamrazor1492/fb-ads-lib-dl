@@ -40,11 +40,15 @@ If Facebook asks you to log in, complete the login in Chrome and scan again. The
 
 ## Google Drive
 
-Drive upload uses Chrome's `identity` API and the Google Drive API with the `drive.file` scope. Users connect their own Google account from the extension popup or library page.
+Drive upload uses Chrome's `identity.launchWebAuthFlow` API and the Google Drive API with the `drive.file` scope. Users connect their own Google account from the extension popup or library page.
 
-For local unpacked testing, Google Drive OAuth only works when the local extension ID matches the Chrome Web Store item ID. If Drive shows `bad client id`, install the Chrome Web Store draft/published build, or add the Web Store public key to `manifest.json` so the unpacked build keeps the same ID.
+The Google OAuth Web client is configured for the Chrome Web Store item ID. If a developer gets a `redirect_uri_mismatch` error while loading unpacked, add their `https://<extension-id>.chromiumapp.org/drive` redirect URI in Google Cloud.
 
-Maintainers can see [GOOGLE_DRIVE_SETUP.md](GOOGLE_DRIVE_SETUP.md) if the Chrome Web Store extension ID changes and a new OAuth client is needed.
+Maintainers can see [GOOGLE_DRIVE_SETUP.md](GOOGLE_DRIVE_SETUP.md) if the Chrome Web Store extension ID changes or another local unpacked ID needs Drive testing.
+
+## Chrome Web Store Update
+
+Upload `ads-library-media-saver-v0.6.0.zip` when updating the Chrome Web Store draft or published listing. Version `0.6.0` switches Google Drive authorization to WebAuthFlow and replaces the older Chrome Extension OAuth flow.
 
 ## Permissions
 
@@ -53,7 +57,7 @@ The extension requests:
 - `downloads`: starts downloads when the user clicks a download button.
 - `identity`: lets the user authorize Google Drive upload with their own Google account.
 - `scripting`: refreshes the scanner and inline buttons on the current Facebook/Ads Library page.
-- `storage`: saves media records, tags, categories, notes, and Drive folder metadata locally.
+- `storage`: saves media records, tags, categories, notes, Drive folder metadata, and short-lived Drive access tokens locally.
 - `tabs`: finds and refreshes the active Ads Library tab, opens the saved media library page, and opens Google authorization when the user connects Drive.
 - Facebook Ads Library host permissions: reads media URLs from Ads Library pages the user has opened and adds inline action buttons.
 - Facebook CDN host permissions: reads a user-selected saved media URL when uploading that item to Drive.

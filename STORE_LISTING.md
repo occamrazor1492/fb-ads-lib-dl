@@ -64,7 +64,7 @@ Used to inject or refresh the scanner and inline action buttons on Meta Ads Libr
 
 ### storage
 
-Used to remember saved media records, tags, categories, notes, and Drive folder metadata locally in Chrome extension storage.
+Used to remember saved media records, tags, categories, notes, Drive folder metadata, and short-lived Drive access tokens locally in Chrome extension storage.
 
 ### tabs
 
@@ -92,7 +92,7 @@ Remote server: No developer-controlled backend server is used.
 
 Cookies: The extension uses the user's existing Chrome session but does not read, display, export, upload, or transmit cookie values.
 
-Local storage: The extension stores saved media records, tags, categories, notes, and Drive folder metadata in Chrome local extension storage.
+Local storage: The extension stores saved media records, tags, categories, notes, Drive folder metadata, and short-lived Drive access tokens in Chrome local extension storage.
 
 Google Drive: Optional. When a user connects Drive and uploads a saved item, the selected media file is sent from Chrome to the user's Google Drive through Google's APIs.
 

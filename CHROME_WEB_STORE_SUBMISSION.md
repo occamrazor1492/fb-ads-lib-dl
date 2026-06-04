@@ -14,7 +14,9 @@ Register as a developer and pay the one-time registration fee.
 
 Upload this package:
 
-`ads-library-media-saver-v0.5.1.zip`
+`ads-library-media-saver-v0.6.0.zip`
+
+Yes, the Chrome Web Store draft or published listing needs an update for Google Drive to work correctly. Version `0.6.0` replaces the old Chrome Extension OAuth flow with WebAuthFlow.
 
 If you need to regenerate it:
 
@@ -22,7 +24,7 @@ If you need to regenerate it:
 ./scripts/package-extension.sh
 ```
 
-Google Drive OAuth is configured for the Chrome Web Store extension ID in `manifest.json`.
+Google Drive OAuth uses a Web OAuth client configured in `background.js`. The Web client must include the Chrome Web Store redirect URI `https://enfijcghckbajcdnckjjcibiphimfipi.chromiumapp.org/drive`.
 
 ## 3. Store Listing
 
@@ -110,7 +112,7 @@ Used to inject or refresh the scanner and inline action buttons on Meta Ads Libr
 
 ### storage
 
-Used to remember saved media records, tags, categories, notes, and Drive folder metadata locally in Chrome extension storage.
+Used to remember saved media records, tags, categories, notes, Drive folder metadata, and short-lived Drive access tokens locally in Chrome extension storage.
 
 ### tabs
 
@@ -136,7 +138,7 @@ Suggested answers:
 - Does the extension transmit data to external servers? Only when the user chooses Google Drive upload; the selected media file is sent from Chrome to the user's Google Drive through Google's APIs.
 - Does the extension use remote code? No.
 - Does the extension use cookies? It uses the user's existing Chrome session to access pages, but it does not read, export, upload, display, or transmit cookie values.
-- Does the extension store data? It stores saved media records, tags, categories, notes, and Drive folder metadata in Chrome local extension storage.
+- Does the extension store data? It stores saved media records, tags, categories, notes, Drive folder metadata, and short-lived Drive access tokens in Chrome local extension storage.
 
 ## 7. Reviewer Notes
 

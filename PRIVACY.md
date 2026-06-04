@@ -16,11 +16,11 @@ When the user clicks a download button, Chrome downloads the selected media URL 
 
 ## Local Storage
 
-The extension stores saved media records, tags, categories, notes, and Google Drive folder metadata locally in Chrome extension storage. The user can clear this by removing the extension or clearing extension data.
+The extension stores saved media records, tags, categories, notes, Google Drive folder metadata, and short-lived Google Drive access tokens locally in Chrome extension storage. The user can clear this by removing the extension or clearing extension data.
 
 ## Google Drive
 
-Google Drive upload is optional. If the user connects Google Drive and clicks an upload action, the selected media file is sent from Chrome to the user's Google Drive through Google's APIs. The extension requests the `drive.file` scope and does not request full Drive access.
+Google Drive upload is optional. If the user connects Google Drive and clicks an upload action, the selected media file is sent from Chrome to the user's Google Drive through Google's APIs. The extension requests the `drive.file` scope and does not request full Drive access. Google Drive access tokens are used only for Drive API requests from the extension and are not sent to any developer-controlled server.
 
 ## Remote Services
 
