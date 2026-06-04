@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Ads Library Media Saver",
-  "version": "0.3.0",
-  "description": "Add download buttons beside media on Meta Ads Library pages you can access in Chrome.",
+  "version": "0.4.0",
+  "description": "Save, tag, download, and optionally upload Meta Ads Library media to Google Drive.",
   "icons": {
     "16": "icons/icon16.png",
     "32": "icons/icon32.png",
@@ -11,14 +11,24 @@
   },
   "permissions": [
     "downloads",
+    "identity",
     "scripting",
     "storage",
     "tabs"
   ],
   "host_permissions": [
     "https://www.facebook.com/ads/library*",
-    "https://web.facebook.com/ads/library*"
+    "https://web.facebook.com/ads/library*",
+    "https://*.fbcdn.net/*",
+    "https://*.fbsbx.com/*",
+    "https://www.googleapis.com/*"
   ],
+  "oauth2": {
+    "client_id": "REPLACE_WITH_GOOGLE_OAUTH_CLIENT_ID.apps.googleusercontent.com",
+    "scopes": [
+      "https://www.googleapis.com/auth/drive.file"
+    ]
+  },
   "background": {
     "service_worker": "background.js"
   },

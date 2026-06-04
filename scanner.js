@@ -4,7 +4,8 @@
     return;
   }
 
-  const BUTTON_CLASS = "ads-library-media-saver-download-button";
+  const GROUP_CLASS = "ads-library-media-saver-action-group";
+  const BUTTON_CLASS = "ads-library-media-saver-action-button";
   const STYLE_ID = "ads-library-media-saver-inline-style";
   const HOST_ATTR = "data-ads-library-media-saver-host";
   const MEDIA_ATTR = "data-ads-library-media-saver-id";
@@ -75,8 +76,9 @@
   function hasRelevantAddedNode(mutation) {
     return [...mutation.addedNodes].some(node => {
       if (node.nodeType !== Node.ELEMENT_NODE) return false;
+      if (node.classList?.contains(GROUP_CLASS)) return false;
       if (node.classList?.contains(BUTTON_CLASS)) return false;
-      if (node.closest?.(`.${BUTTON_CLASS}`)) return false;
+      if (node.closest?.(`.${GROUP_CLASS},.${BUTTON_CLASS}`)) return false;
       return node.matches?.("video,img,[style*='background-image']") ||
         node.querySelector?.("video,img,[style*='background-image']");
     });
@@ -100,7 +102,7 @@
       if (!host) continue;
 
       prepareButtonHost(host);
-      host.appendChild(createDownloadButton(mediaId, mediaElement));
+      host.appendChild(createActionGroup(mediaId, mediaElement));
       added += 1;
     }
 
@@ -108,7 +110,7 @@
     return {
       ok: true,
       added,
-      buttons: document.querySelectorAll(`.${BUTTON_CLASS}`).length
+      buttons: document.querySelectorAll(`.${GROUP_CLASS}`).length
     };
   }
 
@@ -118,11 +120,19 @@
     const style = document.createElement("style");
     style.id = STYLE_ID;
     style.textContent = `
-      .${BUTTON_CLASS} {
+      .${GROUP_CLASS} {
         position: absolute;
         right: 10px;
         top: 10px;
         z-index: 2147483647;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        justify-content: flex-end;
+        max-width: calc(100% - 20px);
+        pointer-events: auto;
+      }
+      .${BUTTON_CLASS} {
         appearance: none;
         border: 0;
         border-radius: 6px;
@@ -131,13 +141,24 @@
         cursor: pointer;
         font: 600 12px/1.2 Arial, sans-serif;
         min-height: 30px;
-        max-width: calc(100% - 20px);
         padding: 8px 10px;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.24);
         white-space: nowrap;
       }
       .${BUTTON_CLASS}:hover {
         background: #0842a0;
+      }
+      .${BUTTON_CLASS}[data-action="save"] {
+        background: #137333;
+      }
+      .${BUTTON_CLASS}[data-action="save"]:hover {
+        background: #0f5d2a;
+      }
+      .${BUTTON_CLASS}[data-action="drive"] {
+        background: #5f6368;
+      }
+      .${BUTTON_CLASS}[data-action="drive"]:hover {
+        background: #3c4043;
       }
       .${BUTTON_CLASS}:disabled {
         cursor: progress;
@@ -156,7 +177,7 @@
   }
 
   function isLikelyCreativeElement(element) {
-    if (element.closest(`.${BUTTON_CLASS}`)) return false;
+    if (element.closest(`.${GROUP_CLASS},.${BUTTON_CLASS}`)) return false;
     if (element.closest("[aria-label='Google Account']")) return false;
 
     const rect = element.getBoundingClientRect();
@@ -195,8 +216,8 @@
   }
 
   function findButtonForMediaId(mediaId) {
-    return [...document.querySelectorAll(`.${BUTTON_CLASS}`)]
-      .find(button => button.getAttribute(BUTTON_ATTR) === mediaId);
+    return [...document.querySelectorAll(`.${GROUP_CLASS}`)]
+      .find(group => group.getAttribute(BUTTON_ATTR) === mediaId);
   }
 
   function findMediaById(mediaId) {
@@ -241,14 +262,43 @@
     host.setAttribute(HOST_ATTR, "1");
   }
 
-  function createDownloadButton(mediaId, mediaElement) {
-    const button = document.createElement("button");
+  function createActionGroup(mediaId, mediaElement) {
+    const group = document.createElement("div");
     const isVideo = mediaElement.tagName === "VIDEO";
-    const idleText = isVideo ? "Download video" : "Download image";
+    group.className = GROUP_CLASS;
+    group.setAttribute(BUTTON_ATTR, mediaId);
+
+    group.appendChild(createMediaActionButton({
+      mediaId,
+      mediaElement,
+      action: "download",
+      idleText: isVideo ? "Download video" : "Download image",
+      busyText: "Finding..."
+    }));
+    group.appendChild(createMediaActionButton({
+      mediaId,
+      mediaElement,
+      action: "save",
+      idleText: "Save",
+      busyText: "Saving..."
+    }));
+    group.appendChild(createMediaActionButton({
+      mediaId,
+      mediaElement,
+      action: "drive",
+      idleText: "Drive",
+      busyText: "Uploading..."
+    }));
+
+    return group;
+  }
+
+  function createMediaActionButton({ mediaId, mediaElement, action, idleText, busyText }) {
+    const button = document.createElement("button");
 
     button.type = "button";
     button.className = BUTTON_CLASS;
-    button.setAttribute(BUTTON_ATTR, mediaId);
+    button.dataset.action = action;
     button.setAttribute("aria-label", idleText);
     button.textContent = idleText;
 
@@ -258,35 +308,61 @@
 
       const currentMedia = findMediaById(mediaId) || mediaElement;
       button.disabled = true;
-      button.textContent = "Finding...";
+      button.textContent = busyText;
 
       try {
         const item = resolveMediaForElement(currentMedia);
         if (!item?.url) throw new Error("No downloadable media URL was found for this card.");
-        await sendRuntimeMessage({ type: "DOWNLOAD_ITEM", item });
-        button.textContent = "Download started";
-        setTimeout(() => {
-          button.textContent = idleText;
-          button.disabled = false;
-        }, 1400);
+        await runMediaAction(action, item);
+        button.textContent = successTextForAction(action);
+        setTimeout(() => resetButton(button, idleText), action === "drive" ? 2200 : 1400);
       } catch (error) {
-        button.textContent = "Not found";
+        button.textContent = errorTextForAction(action);
         button.title = error.message || String(error);
-        setTimeout(() => {
-          button.textContent = idleText;
-          button.disabled = false;
-        }, 2200);
+        setTimeout(() => resetButton(button, idleText), 2600);
       }
     }, true);
 
     return button;
   }
 
+  async function runMediaAction(action, item) {
+    if (action === "download") {
+      await sendRuntimeMessage({ type: "DOWNLOAD_ITEM", item });
+      return;
+    }
+
+    const saveResponse = await sendRuntimeMessage({ type: "SAVE_ITEM", item });
+    if (action === "drive") {
+      await sendRuntimeMessage({
+        type: "UPLOAD_ITEM_TO_DRIVE",
+        itemId: saveResponse.item?.id
+      });
+    }
+  }
+
+  function resetButton(button, text) {
+    button.textContent = text;
+    button.disabled = false;
+  }
+
+  function successTextForAction(action) {
+    if (action === "save") return "Saved";
+    if (action === "drive") return "Uploaded";
+    return "Download started";
+  }
+
+  function errorTextForAction(action) {
+    if (action === "save") return "Save failed";
+    if (action === "drive") return "Drive setup";
+    return "Not found";
+  }
+
   function cleanupOrphanButtons() {
-    for (const button of document.querySelectorAll(`.${BUTTON_CLASS}`)) {
-      const mediaId = button.getAttribute(BUTTON_ATTR);
+    for (const buttonGroup of document.querySelectorAll(`.${GROUP_CLASS}`)) {
+      const mediaId = buttonGroup.getAttribute(BUTTON_ATTR);
       const mediaElement = findMediaById(mediaId);
-      if (!mediaElement || !mediaElement.isConnected) button.remove();
+      if (!mediaElement || !mediaElement.isConnected) buttonGroup.remove();
     }
   }
 
@@ -317,6 +393,7 @@
     return {
       ...selected,
       title: document.title || "Meta Ads Library media",
+      sourceUrl: location.href,
       adId: extractAdId(location.href) || inferAdIdFromCard(card),
       sourceLabel: buildSourceLabel(card, element)
     };
@@ -459,7 +536,7 @@
           return;
         }
         if (response?.ok === false) {
-          reject(new Error(response.error || "Download request failed."));
+          reject(new Error(response.error || "Request failed."));
           return;
         }
         resolve(response);

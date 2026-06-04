@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Saved Media Library</title>
+    <link rel="stylesheet" href="library.css">
+  </head>
+  <body>
+    <header class="topbar">
+      <div>
+        <h1>Saved Media Library</h1>
+        <p id="librarySummary">0 saved items</p>
+      </div>
+      <div class="topActions">
+        <button id="refreshBtn" type="button" class="secondary">Refresh</button>
+        <button id="connectDriveBtn" type="button">Connect Drive</button>
+      </div>
+    </header>
+
+    <main class="layout">
+      <section class="toolbar" aria-label="Library filters">
+        <label>
+          <span>Search</span>
+          <input id="searchInput" type="search" placeholder="Title, ID, tag, note">
+        </label>
+        <label>
+          <span>Category</span>
+          <select id="categoryFilter">
+            <option value="">All categories</option>
+          </select>
+        </label>
+        <label>
+          <span>Tag</span>
+          <select id="tagFilter">
+            <option value="">All tags</option>
+          </select>
+        </label>
+        <button id="clearFiltersBtn" type="button" class="secondary">Clear</button>
+      </section>
+
+      <section id="driveStatus" class="statusLine" role="status"></section>
+      <section id="messageBar" class="messageBar" role="status" hidden></section>
+      <section id="itemsList" class="itemsList" aria-label="Saved items"></section>
+
+      <section id="emptyState" class="emptyState" hidden>
+        <h2>No saved media yet</h2>
+        <p>Open Meta Ads Library and click Save beside a creative.</p>
+      </section>
+    </main>
+
+    <template id="itemTemplate">
+      <article class="item">
+        <div class="preview"></div>
+        <div class="itemBody">
+          <div class="itemHeader">
+            <div>
+              <h2 class="itemTitle"></h2>
+              <p class="itemMeta"></p>
+            </div>
+            <span class="kindPill"></span>
+          </div>
+
+          <div class="fields">
+            <label>
+              <span>Category</span>
+              <input data-field="category" type="text" maxlength="64">
+            </label>
+            <label>
+              <span>Tags</span>
+              <input data-field="tags" type="text" maxlength="240">
+            </label>
+            <label class="notesField">
+              <span>Notes</span>
+              <textarea data-field="notes" rows="3" maxlength="1200"></textarea>
+            </label>
+          </div>
+
+          <div class="itemFooter">
+            <div class="driveMeta"></div>
+            <div class="itemActions">
+              <button type="button" class="secondary" data-action="open-source">Open source</button>
+              <button type="button" class="secondary" data-action="download">Download</button>
+              <button type="button" class="secondary" data-action="save-meta">Save edits</button>
+              <button type="button" data-action="upload-drive">Upload Drive</button>
+              <button type="button" class="danger" data-action="delete">Delete</button>
+            </div>
+          </div>
+        </div>
+      </article>
+    </template>
+
+    <script src="library.js"></script>
+  </body>
+</html>

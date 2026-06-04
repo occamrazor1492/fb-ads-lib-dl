@@ -4,11 +4,11 @@ Ads Library Media Saver runs locally in Chrome.
 
 ## Data Collection
 
-The extension does not collect, sell, share, transmit, or store personal data on any external server.
+The extension does not collect, sell, share, transmit, or store personal data on any developer-controlled external server.
 
 ## Browser Access
 
-The extension can access Facebook and Facebook CDN pages only to scan Meta Ads Library pages that the user opens or submits. It uses the user's existing browser session, but it does not read, export, upload, display, or transmit cookie values.
+The extension can access Facebook Ads Library pages only to scan pages that the user opens or submits. It can access Facebook CDN media URLs only when the user chooses to download, save, or upload a selected media item. It uses the user's existing browser session, but it does not read, export, upload, display, or transmit cookie values.
 
 ## Downloads
 
@@ -16,11 +16,15 @@ When the user clicks a download button, Chrome downloads the selected media URL 
 
 ## Local Storage
 
-The extension stores the last pasted Ads Library URL locally in Chrome extension storage to make repeated use easier. The user can clear this by removing the extension or clearing extension data.
+The extension stores the last pasted Ads Library URL, saved media records, tags, categories, notes, and Google Drive folder metadata locally in Chrome extension storage. The user can clear this by removing the extension or clearing extension data.
+
+## Google Drive
+
+Google Drive upload is optional. If the user connects Google Drive and clicks an upload action, the selected media file is sent from Chrome to the user's Google Drive through Google's APIs. The extension requests the `drive.file` scope and does not request full Drive access.
 
 ## Remote Services
 
-The extension does not use a remote backend service.
+The extension does not use a developer-controlled remote backend service and does not load remote code.
 
 ## Contact
 

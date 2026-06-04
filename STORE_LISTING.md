@@ -6,27 +6,30 @@ Ads Library Media Saver
 
 ## Short Description
 
-Add download buttons beside Meta Ads Library media you can access in Chrome.
+Save, tag, download, and upload Meta Ads Library media you can access in Chrome.
 
 ## Detailed Description
 
-Ads Library Media Saver helps researchers, marketers, and operators save media from Meta Ads Library pages they can already access in Chrome.
+Ads Library Media Saver helps researchers, marketers, and operators organize media from Meta Ads Library pages they can already access in Chrome.
 
-Open a Meta Ads Library page and the extension adds download buttons beside visible video and image creatives. Click the button next to the specific creative you want to save. You can also paste a Meta Ads Library link or refresh the current Ads Library tab from the popup if the page is still loading.
+Open a Meta Ads Library page and the extension adds Download, Save, and Drive buttons beside visible video and image creatives. Click the button next to the specific creative you want instead of working from an unlabeled result list.
 
-The extension detects media URLs already present in the loaded page data and asks Chrome to download the selected video or image asset locally.
+Saved items appear in a local library where you can edit categories, tags, and notes, then filter by keyword, category, or tag. You can also download selected media locally through Chrome downloads. Optional Google Drive upload lets a user send a selected saved creative to their own Drive after Google authorization.
 
-The extension runs locally in Chrome. It has no backend service, does not use a shared Facebook account, and does not upload cookies, page content, or media URLs.
+The extension runs in Chrome. It has no developer-controlled backend service, does not use a shared Facebook account, and does not upload cookies. Saved records stay in local Chrome extension storage unless the user chooses Google Drive upload.
 
 ### Key Features
 
-- Add download buttons beside visible Ads Library creatives.
+- Add action buttons beside visible Ads Library creatives.
 - Refresh buttons on the current Ads Library tab.
 - Open a pasted Meta Ads Library URL.
 - Detect MP4 video assets and image assets.
 - Prefer media from the clicked creative card when available.
 - Save selected media locally through Chrome downloads.
-- Store only the last pasted URL in local extension storage.
+- Save media records to a local library.
+- Edit tags, categories, and notes.
+- Filter saved creatives by keyword, tag, or category.
+- Optionally upload selected saved media to the user's Google Drive.
 
 ### Important Limitations
 
@@ -35,6 +38,7 @@ The extension runs locally in Chrome. It has no backend service, does not use a 
 - Some ads expose separate video/audio tracks. This MVP does not merge separate tracks inside the extension.
 - Some visible Meta video players use streaming blobs; in that case the extension falls back to URLs found near the creative card or in the loaded page data.
 - Meta may change Ads Library internals, so detection may require future updates.
+- Google Drive upload requires a configured Google OAuth Client ID.
 
 ## Category
 
@@ -50,13 +54,17 @@ English
 
 Used only when the user clicks a download button. The extension asks Chrome to save the selected media URL to the user's local Downloads folder.
 
+### identity
+
+Used only for optional Google Drive authorization when the user clicks Connect Drive or Upload Drive.
+
 ### scripting
 
-Used to inject or refresh the scanner and inline download buttons on Meta Ads Library pages so the extension can inspect page data already loaded in the user's browser.
+Used to inject or refresh the scanner and inline action buttons on Meta Ads Library pages so the extension can inspect page data already loaded in the user's browser.
 
 ### storage
 
-Used to remember the last pasted Ads Library URL locally in Chrome extension storage.
+Used to remember the last pasted Ads Library URL, saved media records, tags, categories, notes, and Drive folder metadata locally in Chrome extension storage.
 
 ### tabs
 
@@ -64,24 +72,29 @@ Used to open the submitted Ads Library URL in a normal Chrome tab and to refresh
 
 ### Host permissions
 
-The extension requests access only to Meta Ads Library URL patterns:
+The extension requests these host permissions:
 
 - `https://www.facebook.com/ads/library*`
 - `https://web.facebook.com/ads/library*`
+- `https://*.fbcdn.net/*`
+- `https://*.fbsbx.com/*`
+- `https://www.googleapis.com/*`
 
-These permissions allow the scanner and inline buttons to run on Ads Library pages opened by the user.
+The Facebook Ads Library patterns allow the scanner and inline buttons to run on Ads Library pages opened by the user. Facebook CDN patterns are used only for selected media downloads and Drive uploads. The Google APIs pattern is used only for optional Google Drive upload.
 
 ## Privacy Disclosure Draft
 
-Data collection: No user data is collected, sold, shared, or transmitted.
+Data collection: No user data is collected, sold, or shared with the developer.
 
 Remote code: No remote code is loaded.
 
-Remote server: No backend server is used.
+Remote server: No developer-controlled backend server is used.
 
 Cookies: The extension uses the user's existing Chrome session but does not read, display, export, upload, or transmit cookie values.
 
-Local storage: The extension stores only the last pasted Ads Library URL in Chrome local extension storage.
+Local storage: The extension stores the last pasted Ads Library URL, saved media records, tags, categories, notes, and Drive folder metadata in Chrome local extension storage.
+
+Google Drive: Optional. When a user connects Drive and uploads a saved item, the selected media file is sent from Chrome to the user's Google Drive through Google's APIs.
 
 ## Reviewer Notes
 
@@ -92,8 +105,10 @@ To test:
 1. Load the extension.
 2. Open a Meta Ads Library page containing visible image or video creatives.
 3. Wait for ad cards to load.
-4. Click the inline "Download video" or "Download image" button beside a creative.
+4. Click the inline "Save" button beside a creative.
 5. If buttons are not visible yet, open the extension popup and click "Add page buttons."
+6. Open the popup and click "Library" to edit tags and categories.
+7. If Google Drive OAuth is configured, click "Connect Drive" and "Upload Drive" for a saved item.
 
 ## Required Store Assets
 

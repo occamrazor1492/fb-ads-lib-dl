@@ -1,6 +1,7 @@
 const adUrl = document.querySelector("#adUrl");
 const scanBtn = document.querySelector("#scanBtn");
 const scanCurrentBtn = document.querySelector("#scanCurrentBtn");
+const openLibraryBtn = document.querySelector("#openLibraryBtn");
 const statusText = document.querySelector("#statusText");
 const resultsPanel = document.querySelector("#resultsPanel");
 const summary = document.querySelector("#summary");
@@ -12,6 +13,7 @@ let lastResult = null;
 function setBusy(isBusy, text) {
   scanBtn.disabled = isBusy;
   scanCurrentBtn.disabled = isBusy;
+  openLibraryBtn.disabled = isBusy;
   statusText.textContent = text;
 }
 
@@ -71,6 +73,7 @@ function renderResult(result) {
       <div class="mediaMeta">${escapeText(item.filename || item.url)}</div>
       <div class="mediaActions">
         <button type="button" class="secondary" data-download-index="${index}">Download</button>
+        <button type="button" class="secondary" data-save-index="${index}">Save</button>
       </div>
     </article>
   `).join("");
@@ -110,6 +113,14 @@ scanCurrentBtn.addEventListener("click", () => {
   startScan("", true);
 });
 
+openLibraryBtn.addEventListener("click", async () => {
+  try {
+    await extensionMessage({ type: "OPEN_LIBRARY" });
+  } catch (error) {
+    statusText.innerHTML = `<span class="error">${escapeText(error.message)}</span>`;
+  }
+});
+
 downloadBestBtn.addEventListener("click", async () => {
   if (!lastResult?.best) return;
   try {
@@ -121,13 +132,19 @@ downloadBestBtn.addEventListener("click", async () => {
 });
 
 mediaList.addEventListener("click", async event => {
-  const button = event.target.closest("[data-download-index]");
+  const button = event.target.closest("[data-download-index],[data-save-index]");
   if (!button || !lastResult) return;
-  const item = lastResult.media[Number(button.dataset.downloadIndex)];
+  const index = button.dataset.downloadIndex ?? button.dataset.saveIndex;
+  const item = lastResult.media[Number(index)];
   if (!item) return;
   try {
-    await extensionMessage({ type: "DOWNLOAD_ITEM", item });
-    statusText.textContent = "Download started.";
+    if (button.dataset.saveIndex) {
+      await extensionMessage({ type: "SAVE_ITEM", item });
+      statusText.textContent = "Saved to library.";
+    } else {
+      await extensionMessage({ type: "DOWNLOAD_ITEM", item });
+      statusText.textContent = "Download started.";
+    }
   } catch (error) {
     statusText.innerHTML = `<span class="error">${escapeText(error.message)}</span>`;
   }
