@@ -1,15 +1,16 @@
 # Ads Library Media Saver
 
-Ads Library Media Saver is a Chrome Manifest V3 extension that helps users save media from Meta Ads Library pages they can already access in their own browser session.
+Ads Library Media Saver is a Chrome Manifest V3 extension that adds local download buttons beside media on Meta Ads Library pages users can already access in their own browser session.
 
 It runs entirely in Chrome. There is no backend service, no shared Facebook account, and no cookie upload.
 
 ## Features
 
-- Paste a Meta Ads Library URL and scan it in a normal Chrome tab.
-- Scan the currently active Facebook Ads Library tab.
+- Add download buttons beside visible Ads Library images and videos.
+- Paste a Meta Ads Library URL and open it in a normal Chrome tab.
+- Refresh buttons on the currently active Facebook Ads Library tab.
 - Detect MP4 video assets and image assets already present in the loaded page data.
-- Prefer the best progressive MP4 when one is available.
+- Prefer media from the clicked creative card when one is available.
 - Use Chrome's built-in downloads API to save selected media locally.
 - Store only the last pasted Ads Library URL in local extension storage.
 
@@ -24,11 +25,11 @@ It runs entirely in Chrome. There is no backend service, no shared Facebook acco
 
 ## Usage
 
-1. Copy a Meta Ads Library ad link, ideally one containing `?id=...`.
-2. Open the extension popup.
-3. Paste the link and click `Scan`.
-4. Wait for the Facebook tab to finish loading.
-5. Click `Best MP4` or download a specific detected item.
+1. Open a Meta Ads Library page.
+2. Wait for the ad cards and media to load.
+3. Click the `Download video` or `Download image` button shown beside the creative you want.
+4. If buttons are not visible yet, open the extension popup and click `Add page buttons`.
+5. The popup result list remains available as a fallback for single-ad pages.
 
 If Facebook asks you to log in, complete the login in Chrome and scan again. The extension uses your own browser session and does not export your cookies.
 
@@ -37,10 +38,10 @@ If Facebook asks you to log in, complete the login in Chrome and scan again. The
 The extension requests:
 
 - `downloads`: starts downloads when the user clicks a download button.
-- `scripting`: injects the scanner into the current Facebook/Ads Library page.
+- `scripting`: refreshes the scanner and inline buttons on the current Facebook/Ads Library page.
 - `storage`: saves the last pasted URL locally.
-- `tabs`: opens and scans the requested Ads Library tab.
-- Facebook Ads Library host permissions: reads media URLs from Ads Library pages the user has opened.
+- `tabs`: opens the requested Ads Library tab and refreshes the active Ads Library tab.
+- Facebook Ads Library host permissions: reads media URLs from Ads Library pages the user has opened and adds inline download buttons.
 
 ## Privacy
 
@@ -48,9 +49,10 @@ The extension does not collect, sell, share, or transmit personal data. It does 
 
 ## Limitations
 
-- This is designed for single-ad workflows, not bulk scraping.
+- This is designed for user-selected downloads, not bulk scraping.
 - Meta changes Ads Library page internals regularly, so the scanner may need maintenance.
 - Some ads expose only separate DASH video/audio tracks. This MVP downloads exposed assets but does not merge separate tracks inside the extension.
+- On video ads where Meta exposes only a streaming blob to the visible player, the button falls back to media URLs found near that card or in the loaded page data.
 - The extension can only access content that the user's own browser session is allowed to load.
 
 ## Development
@@ -59,7 +61,7 @@ The extension is plain HTML, CSS, and JavaScript:
 
 - `manifest.json`: Chrome MV3 manifest.
 - `background.js`: tab orchestration and downloads.
-- `scanner.js`: page scanner injected into Facebook pages.
+- `scanner.js`: page scanner and inline download button content script for Facebook pages.
 - `popup.html`, `popup.css`, `popup.js`: popup UI.
 
 Quick checks:

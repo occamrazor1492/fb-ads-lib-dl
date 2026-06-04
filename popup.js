@@ -55,10 +55,11 @@ function describeItem(item) {
 function renderResult(result) {
   lastResult = result;
   const media = Array.isArray(result.media) ? result.media : [];
+  const buttonCount = result.inlineButtons?.buttons || 0;
   resultsPanel.hidden = false;
   downloadBestBtn.disabled = !result.best;
   summary.textContent = media.length
-    ? `${media.length} media URL${media.length === 1 ? "" : "s"} found. ${result.adId ? `Ad ID: ${result.adId}.` : ""}`
+    ? `${buttonCount || "Page"} download button${buttonCount === 1 ? "" : "s"} added. Popup results remain available as a fallback.`
     : "No downloadable media was found on the loaded page.";
 
   mediaList.innerHTML = media.map((item, index) => `
@@ -76,7 +77,7 @@ function renderResult(result) {
 }
 
 async function startScan(url, currentTab = false) {
-  setBusy(true, currentTab ? "Scanning current tab..." : "Opening and scanning...");
+  setBusy(true, currentTab ? "Adding page buttons..." : "Opening page and adding buttons...");
   resultsPanel.hidden = true;
   mediaList.innerHTML = "";
 
@@ -86,7 +87,9 @@ async function startScan(url, currentTab = false) {
       url
     });
     renderResult(response.result);
-    statusText.textContent = "Scan complete.";
+    statusText.textContent = response.result?.inlineButtons?.buttons
+      ? "Buttons added beside visible media."
+      : "Scan complete. Scroll the page if media is still loading.";
   } catch (error) {
     statusText.innerHTML = `<span class="error">${escapeText(error.message)}</span>`;
   } finally {

@@ -2,7 +2,7 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-OUT_FILE="${ROOT_DIR}/ads-library-media-saver-v0.2.0.zip"
+OUT_FILE="${ROOT_DIR}/ads-library-media-saver-v0.3.0.zip"
 
 cd "$ROOT_DIR"
 rm -f "$OUT_FILE"

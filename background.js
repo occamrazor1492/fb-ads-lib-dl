@@ -14,6 +14,8 @@ async function handleMessage(message) {
       return { result: await scanUrl(message.url) };
     case "SCAN_CURRENT_TAB":
       return { result: await scanCurrentTab() };
+    case "INSTALL_INLINE_BUTTONS":
+      return { result: await installInlineButtonsCurrentTab() };
     case "DOWNLOAD_ITEM":
       await downloadItem(message.item);
       return {};
@@ -55,7 +57,36 @@ async function scanTab(tabId, sourceUrl) {
   }
 
   if (!lastResult) throw new Error("Could not scan this page.");
-  return normalizeScanResult(lastResult, sourceUrl);
+  const inlineButtons = await installInlineButtons(tabId);
+  return {
+    ...normalizeScanResult(lastResult, sourceUrl),
+    inlineButtons
+  };
+}
+
+async function installInlineButtonsCurrentTab() {
+  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  if (!tab?.id || !tab.url) throw new Error("No active tab found.");
+  normalizeFacebookUrl(tab.url);
+
+  await chrome.scripting.executeScript({
+    target: { tabId: tab.id },
+    files: ["scanner.js"]
+  });
+
+  return installInlineButtons(tab.id);
+}
+
+async function installInlineButtons(tabId) {
+  try {
+    const [{ result }] = await chrome.scripting.executeScript({
+      target: { tabId },
+      func: () => window.__adsLibraryMediaSaverInstallButtons?.()
+    });
+    return result || { ok: true, added: 0, buttons: 0 };
+  } catch {
+    return { ok: false, added: 0, buttons: 0 };
+  }
 }
 
 async function waitForTabLoad(tabId) {
@@ -146,9 +177,10 @@ async function downloadItem(item) {
 }
 
 function buildFilename({ item, title, adId, index }) {
+  const label = item.sourceLabel || title || "media";
   const parts = [
     "Ads Library",
-    cleanName(title || "media").slice(0, 70),
+    cleanName(label).slice(0, 70),
     adId || item.videoId || item.assetId || `item-${index + 1}`,
     item.quality ? `${item.quality}p` : "",
     item.audio ? "audio" : ""
