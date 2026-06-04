@@ -42,6 +42,8 @@ If Facebook asks you to log in, complete the login in Chrome and scan again. The
 
 Drive upload uses Chrome's `identity` API and the Google Drive API with the `drive.file` scope. Users connect their own Google account from the extension popup or library page.
 
+For local unpacked testing, Google Drive OAuth only works when the local extension ID matches the Chrome Web Store item ID. If Drive shows `bad client id`, install the Chrome Web Store draft/published build, or add the Web Store public key to `manifest.json` so the unpacked build keeps the same ID.
+
 Maintainers can see [GOOGLE_DRIVE_SETUP.md](GOOGLE_DRIVE_SETUP.md) if the Chrome Web Store extension ID changes and a new OAuth client is needed.
 
 ## Permissions

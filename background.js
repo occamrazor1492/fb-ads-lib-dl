@@ -4,6 +4,7 @@ const LIBRARY_ITEMS_KEY = "libraryItems";
 const DRIVE_SETTINGS_KEY = "driveSettings";
 const DRIVE_FOLDER_NAME = "Ads Library Media Saver";
 const DRIVE_SCOPE = "https://www.googleapis.com/auth/drive.file";
+const CHROME_WEB_STORE_EXTENSION_ID = "enfijcghckbajcdnckjjcibiphimfipi";
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   handleMessage(message, sender)
@@ -428,14 +429,31 @@ async function getDriveToken(interactive) {
     throw new Error("Google Drive sign-in is unavailable in this Chrome profile.");
   }
 
-  const result = await chrome.identity.getAuthToken({
-    interactive,
-    enableGranularPermissions: true,
-    scopes: [DRIVE_SCOPE]
-  });
+  let result;
+  try {
+    result = await chrome.identity.getAuthToken({
+      interactive,
+      enableGranularPermissions: true,
+      scopes: [DRIVE_SCOPE]
+    });
+  } catch (error) {
+    throw new Error(formatDriveAuthError(error));
+  }
+
   const token = typeof result === "string" ? result : result?.token;
   if (!token) throw new Error("Google Drive authorization did not return an access token.");
   return token;
+}
+
+function formatDriveAuthError(error) {
+  const message = error?.message || String(error);
+  if (!/bad client id/i.test(message)) return message;
+
+  if (chrome.runtime.id !== CHROME_WEB_STORE_EXTENSION_ID) {
+    return `Google Drive authorization is configured for the Chrome Web Store extension ID ${CHROME_WEB_STORE_EXTENSION_ID}, but this build is running as ${chrome.runtime.id}. Install the Chrome Web Store build to test Drive, or add the Web Store public key to manifest.json before loading unpacked.`;
+  }
+
+  return "Google Drive authorization is not ready yet. Google OAuth settings can take 5 minutes to a few hours to propagate. Reload the extension and try again later.";
 }
 
 async function getDriveSettings() {

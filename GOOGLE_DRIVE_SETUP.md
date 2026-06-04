@@ -66,6 +66,20 @@ Replace the client ID in `manifest.json`:
 
 with the real client ID from Google Cloud.
 
+## Local Unpacked Testing
+
+Chrome OAuth clients are tied to one extension ID. The current OAuth client is tied to the Chrome Web Store item ID:
+
+```text
+enfijcghckbajcdnckjjcibiphimfipi
+```
+
+If you load this repository with `Load unpacked`, Chrome may assign a different local extension ID. In that case, Google Drive sign-in can fail with `bad client id` even when the OAuth client is correct.
+
+For Drive testing, install the Chrome Web Store draft/published build. If you must test with `Load unpacked`, open the item's Package tab in the Chrome Web Store Developer Dashboard, copy the public key, and add it to `manifest.json` as the `key` field so the unpacked extension keeps the Web Store item ID.
+
+Google also notes that OAuth client changes can take 5 minutes to a few hours to take effect. If the Web Store build still shows `bad client id` immediately after creating or changing the OAuth client, reload the extension and try again later.
+
 ## 6. Repackage The Extension
 
 Run:
